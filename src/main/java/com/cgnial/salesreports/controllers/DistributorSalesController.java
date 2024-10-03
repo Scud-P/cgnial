@@ -10,7 +10,7 @@ public class DistributorSalesController {
 
     @GetMapping("/list")
     public String getDistributorSalesList() {
-        return "distributor/list";
+        return "po/list";
     }
 
 }

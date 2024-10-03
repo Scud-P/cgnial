@@ -100,7 +100,7 @@ public class ExcelReaderService {
     }
 
 
-    public List<PurchaseOrder> purchaseOrders() throws IOException {
+    public List<PurchaseOrder> readPurchaseOrdersExcelFile() throws IOException {
         String fileLocation = "src/main/resources/excels/pomaster.xlsx";
         FileInputStream file = new FileInputStream(fileLocation);
         Workbook workbook = new XSSFWorkbook(file);
@@ -128,6 +128,7 @@ public class ExcelReaderService {
             if (row.getCell(2) != null) {
                 po.setAmount((int) row.getCell(2).getNumericCellValue());
             }
+            logger.info("ExcelReader found PO: {}", po);
             pos.add(po);
         }
         return pos;
