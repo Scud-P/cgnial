@@ -1,34 +1,25 @@
 package com.cgnial.salesreports.domain;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Entity
-@Table(name = "products")
+@Document(collection = "products")
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
-    private int productId;
-    @Column(name = "coutu_code")
-    private String coutuCode;
-    @Column(name = "coutu_description")
-    private String coutuDescription;
-    @Column(name = "coutu_format")
-    private String coutuUnitFormat;
-    @Column(name = "coutu_uc")
-    private String unitsPerCase;
-    @Column(name = "format_category")
-    private String formatCategory;
-    @Column(name = "product_family")
-    private String productFamily;
-    @Column(name = "unfi_code")
+    private String productId;
+    private int coutuCode;
+    private String frenchDescription;
+    private String englishDescription;
+    private int size;
+    private String uom;
+    private String caseSize;
+    private int unitsPerCase;
+    private String caseUpc;
+    private String unitUpc;
     private String unfiCode;
-    @Column(name = "satau_code")
     private String satauCode;
-    @Column(name = "puresource_code")
     private String puresourceCode;
-
 }

@@ -1,10 +1,85 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>Product Details</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-$END$
+<!-- Bootstrap Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">MyApp</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#" th:href="@{/}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#" th:href="@{/products/list}">Produits</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-center" th:text="${product.frenchDescription}">Product Description</h5>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Code produit:</strong> <span th:text="${product.coutuCode}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Description EN:</strong> <span th:text="${product.englishDescription}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Format unité:</strong> <span th:text="${product.size}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Unité de mesure:</strong> <span th:text="${product.uom}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Unités par caisse:</strong> <span th:text="${product.unitsPerCase}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Type de caisse:</strong> <span th:text="${product.caseSize}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>UPC Caisse:</strong> <span th:text="${product.caseUpc}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>UPC Unité</strong> <span th:text="${product.unitUpc}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>UNFI Code:</strong> <span th:text="${product.unfiCode}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>SATAU Code:</strong> <span th:text="${product.satauCode}"></span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Puresource Code:</strong> <span th:text="${product.puresourceCode}"></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-footer text-center">
+                    <!-- Buttons for Update and Delete actions -->
+                    <a href="#" th:href="@{'/products/update/' + ${product.productId}}" class="btn btn-success">Update</a>
+                    <a href="#" th:href="@{'/products/delete/' + ${product.productId}}" class="btn btn-danger">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

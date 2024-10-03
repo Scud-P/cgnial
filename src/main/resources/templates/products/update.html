@@ -1,10 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>Edit Product</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-$END$
+<!-- Bootstrap Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">MyApp</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#" th:href="@{/}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#" th:href="@{/products/list}">Produits</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <form th:action="@{/products/update/{id}(id=${product.productId})}" th:object="${product}" method="post" class="mt-4">
+        <input type="hidden" name="_method" value="PUT"/>
+        <input type="hidden" th:field="*{productId}" />
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="coutuCode" class="form-label">Code produit</label>
+                <input type="number" class="form-control" id="coutuCode" th:field="*{coutuCode}"
+                       placeholder="Code produit maison" required>
+            </div>
+            <div class="col-md-6">
+                <label for="frenchDescription" class="form-label">Description FR</label>
+                <input type="text" class="form-control" id="frenchDescription" th:field="*{frenchDescription}"
+                       placeholder="Description du produit en français" required>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="englishDescription" class="form-label">Description EN</label>
+                <input type="text" class="form-control" id="englishDescription" th:field="*{englishDescription}"
+                       placeholder="Description du produit en anglais" required>
+            </div>
+            <div class="col-md-6">
+                <label for="size" class="form-label">Format produit</label>
+                <input type="number" class="form-control" id="size" th:field="*{size}"
+                       placeholder="Format sans l'unité (exemple: 700)" required>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="uom" class="form-label">Unité de mesure</label>
+                <select class="form-select" id="uom" th:field="*{uom}" required>
+                    <option value="" disabled>Select unit of measure</option>
+                    <option value="grammes" th:selected="${product.uom == 'grammes'}">g</option>
+                    <option value="kilogrammes" th:selected="${product.uom == 'kilogrammes'}">kg</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="unitsPerCase" class="form-label">Unités par caisse</label>
+                <input type="number" class="form-control" id="unitsPerCase" th:field="*{unitsPerCase}"
+                       placeholder="Unités par caisse" required>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="caseUpc" class="form-label">UPC caisse</label>
+                <input type="text" class="form-control" id="caseUpc" th:field="*{caseUpc}" placeholder="UPC caisse"
+                       required>
+            </div>
+            <div class="col-md-6">
+                <label for="unitUpc" class="form-label">UPC unité</label>
+                <input type="text" class="form-control" id="unitUpc" th:field="*{unitUpc}" placeholder="UPC unité"
+                       required>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="caseSize" class="form-label">Type de caisse</label>
+                <select class="form-select" id="caseSize" th:field="*{caseSize}" required>
+                    <option value="" disabled selected>Sélectionner la taille</option>
+                    <option value="petite" th:selected="${product.caseSize == 'petite'}">Petite</option>
+                    <option value="moyenne" th:selected="${product.caseSize == 'moyenne'}">Moyenne</option>
+                    <option value="grande" th:selected="${product.caseSize == 'grande'}">Grande</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="unfiCode" class="form-label">Code UNFI</label>
+                <input type="text" class="form-control" id="unfiCode" th:field="*{unfiCode}" placeholder="Code UNFI"
+                       required>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="puresourceCode" class="form-label">Code Puresource</label>
+                <input type="text" class="form-control" id="puresourceCode" th:field="*{puresourceCode}"
+                       placeholder="Code Puresource" required>
+            </div>
+            <div class="col-md-6">
+                <label for="satauCode" class="form-label">Code Satau</label>
+                <input type="text" class="form-control" id="satauCode" th:field="*{satauCode}" placeholder="Code Satau"
+                       required>
+            </div>
+        </div>
+        <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+        <div class="text-center mt-2">
+            <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+    </form>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
