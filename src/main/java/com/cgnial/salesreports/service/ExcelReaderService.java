@@ -1,6 +1,8 @@
 package com.cgnial.salesreports.service;
 
 import com.cgnial.salesreports.domain.Product;
+import com.cgnial.salesreports.domain.PurchaseOrder;
+import com.cgnial.salesreports.domain.PurchaseOrderProduct;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -8,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
@@ -94,6 +97,44 @@ public class ExcelReaderService {
         workbook.close();
         file.close();
         return products;
+    }
+
+
+    public List<PurchaseOrder> purchaseOrders() throws IOException {
+        String fileLocation = "src/main/resources/excels/pomaster.xlsx";
+        FileInputStream file = new FileInputStream(fileLocation);
+        Workbook workbook = new XSSFWorkbook(file);
+
+        Sheet sheet = workbook.getSheetAt(0);
+
+        List<PurchaseOrder> pos = new ArrayList<>();
+
+        for (Row row : sheet) {
+            // Skip the header row
+            if (row.getRowNum() == 0) {
+                continue;
+            }
+
+            if (isRowEmpty(row)) {
+                break;
+            }
+            PurchaseOrder po = new PurchaseOrder();
+            if (row.getCell(0) != null) {
+                po.setPoDate(row.getCell(0).getStringCellValue());
+            }
+            if (row.getCell(1) != null) {
+                po.setDistributor(row.getCell(1).getStringCellValue());
+            }
+            if (row.getCell(2) != null) {
+                po.setAmount((int) row.getCell(2).getNumericCellValue());
+            }
+            pos.add(po);
+        }
+        return pos;
+    }
+
+    public List<PurchaseOrderProduct> purchaseOrdersProducts() {
+        return purchaseOrdersProducts();
     }
 
     private boolean isRowEmpty(Row row) {
