@@ -3,8 +3,6 @@ package com.cgnial.salesreports.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Data
 @Entity
 @Table(name="purchase_orders")
@@ -16,7 +14,7 @@ public class PurchaseOrder {
     private Integer id;
     @Column(name="po_date")
     private String poDate;
-    @Column(name="po")
+    @Column(name="distributor")
     private String distributor;
     @Column(name="po_amount")
     private double amount;

@@ -9,8 +9,6 @@ import java.time.format.DateTimeFormatter;
 @Data
 public class PurchaseOrderDTO {
 
-    //TODO JUST MAKE THE LocalDateUtil STATIC?
-
     private Integer id;
     private LocalDate poDate;
     private String distributor;

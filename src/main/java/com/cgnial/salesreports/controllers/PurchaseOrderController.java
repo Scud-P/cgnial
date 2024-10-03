@@ -1,6 +1,7 @@
 package com.cgnial.salesreports.controllers;
 
 import com.cgnial.salesreports.domain.DTO.PurchaseOrderDTO;
+import com.cgnial.salesreports.domain.DTO.YearlySalesByDistributorDTO;
 import com.cgnial.salesreports.service.PurchaseOrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,16 +42,15 @@ public class PurchaseOrderController {
     @GetMapping("/list")
     public String getAllPurchaseOrders(Model model) {
         List<PurchaseOrderDTO> purchaseOrderDTOs = purchaseOrderService.findAllPurchaseOrders();
-
-        logger.info("Controller found {} POs to display", purchaseOrderDTOs.size());
-
-
-        for(PurchaseOrderDTO purchaseOrderDTO : purchaseOrderDTOs) {
-            logger.info(String.valueOf(purchaseOrderDTO.getId()));
-        }
-
         model.addAttribute("pos", purchaseOrderDTOs);
         return "po/list";
+    }
+
+    @GetMapping("/dashboard")
+    public String getYearlySalesByDistributor(Model model) {
+        List<YearlySalesByDistributorDTO> yearlySalesByDistributorDTOS = purchaseOrderService.getYearlySalesByDistributorDTOS();
+        model.addAttribute("yearlySalesByDistributor", yearlySalesByDistributorDTOS);
+        return "po/dashboard";
     }
 
 }
