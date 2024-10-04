@@ -1,7 +1,6 @@
 package com.cgnial.salesreports.service;
 
-import com.cgnial.salesreports.domain.DTO.PurchaseOrderDTO;
-import com.cgnial.salesreports.domain.DTO.YearlySalesByDistributorDTO;
+import com.cgnial.salesreports.domain.DTO.*;
 import com.cgnial.salesreports.domain.Distributors;
 import com.cgnial.salesreports.domain.PurchaseOrder;
 import com.cgnial.salesreports.repositories.PurchaseOrderRepository;
@@ -10,11 +9,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PurchaseOrderService {
@@ -76,4 +74,78 @@ public class PurchaseOrderService {
         }
         return new ArrayList<>(yearlySalesMap.values());
     }
+
+
+    public List<DistributorSalesDTO> getSalesData() {
+        List<PurchaseOrder> allPos = purchaseOrderRepository.findAll();
+
+        // Group by Distributor and Year, summing the amounts
+        Map<String, Map<Integer, Double>> aggregatedData = allPos.stream()
+                .collect(Collectors.groupingBy(
+                        po -> po.getDistributor().toUpperCase(),
+                        Collectors.groupingBy(
+                                po -> extractYear(po.getPoDate()),
+                                Collectors.summingDouble(PurchaseOrder::getAmount)
+                        )
+                ));
+
+        // Convert nested maps into a list of DistributorSalesDTO
+        return aggregatedData.entrySet().stream()
+                .map(distributorEntry -> {
+                    List<SalesByYearDTO> salesByYear = distributorEntry.getValue().entrySet().stream()
+                            .map(yearEntry -> new SalesByYearDTO(yearEntry.getKey(), yearEntry.getValue()))
+                            .collect(Collectors.toList());
+
+                    return new DistributorSalesDTO(distributorEntry.getKey(), salesByYear);
+                })
+                .toList();
+    }
+
+//    public Map<String, Map<Integer, Double>> getSalesByDistributorByYear() {
+//        List<DistributorSalesDTO> salesData = getSalesData();  // Assuming this method is already present
+//
+//        // Create a map where each distributor maps to a list of sales by year
+//        Map<String, Map<Integer, Double>> salesMap = new LinkedHashMap<>();
+//
+//        for (DistributorSalesDTO dto : salesData) {
+//            salesMap
+//                    .computeIfAbsent(dto.getDistributor(), k -> new LinkedHashMap<>())
+//                    .put(dto.getYear(), dto.getSales());
+//        }
+//
+//        return salesMap;
+//    }
+
+//    public Map<String, Map<Integer, Double>> getSalesByQuarterByDistributorByYear() {
+//        List<SalesPerDistributorPerQuarterPerYearDTO> salesData = getSalesDataByQuarter();
+//
+//        // Create a map where each distributor maps to a list of sales by year
+//        Map<String, Map<Integer, Double>> salesMap = new LinkedHashMap<>();
+//
+//        for (SalesPerDistributorPerYearDTO dto : salesData) {
+//            salesMap
+//                    .computeIfAbsent(dto.getDistributor(), k -> new LinkedHashMap<>())
+//                    .put(dto.getYear(), dto.getSales());
+//        }
+//
+//        return salesMap;
+//    }
+//
+//    private List<SalesPerDistributorPerQuarterPerYearDTO> getSalesDataByQuarter() {
+//
+//    }
+
+
+    public int extractYear (String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        return LocalDate.parse(dateString, formatter).getYear();
+    }
+
+    private String extractQuarter(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        LocalDate date = LocalDate.parse(dateString, formatter);
+        int quarter = (date.getMonthValue() - 1) / 3 + 1;
+        return "Q"+quarter;
+    }
+
 }

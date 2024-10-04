@@ -1,6 +1,8 @@
 package com.cgnial.salesreports.controllers;
 
+import com.cgnial.salesreports.domain.DTO.DistributorSalesDTO;
 import com.cgnial.salesreports.domain.DTO.PurchaseOrderDTO;
+import com.cgnial.salesreports.domain.DTO.SalesPerDistributorPerYearDTO;
 import com.cgnial.salesreports.domain.DTO.YearlySalesByDistributorDTO;
 import com.cgnial.salesreports.service.PurchaseOrderService;
 import org.slf4j.Logger;
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/po")
@@ -52,5 +56,21 @@ public class PurchaseOrderController {
         model.addAttribute("yearlySalesByDistributor", yearlySalesByDistributorDTOS);
         return "po/dashboard";
     }
+
+    @GetMapping("/salesByDistributorByYear")
+    public String getSalesByDistributorByYearGraph(Model model) {
+        List<DistributorSalesDTO> salesData = purchaseOrderService.getSalesData();
+        model.addAttribute("salesMap", salesData);
+        return "po/salesByDistributorByYear";
+    }
+
+//    @GetMapping("/salesByDistributorByYear")
+//    public String getSalesByQuarterByDistributorByYearGraph(Model model) {
+//
+//        //TODO
+//        Map<String, Map<Integer, Double>> salesMap = purchaseOrderService.getSalesByQuarterByDistributorByYear();
+//        model.addAttribute("salesMap", salesMap);
+//        return "po/salesByDistributorByYear";
+//    }
 
 }

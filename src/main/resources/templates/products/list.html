@@ -21,36 +21,38 @@
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="#" th:href="@{/products/list}">Produits</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#" th:href="@{/po/list}">Ventes Distributeurs</a>
-                </li>
             </ul>
         </div>
     </div>
 </nav>
-
-<div class="container mt-5">
-    <h1 class="mb-4">Purchase Orders</h1>
-    <table class="table table-bordered table-hover">
-        <thead class="thead-light">
-        <tr>
-            <th>ID</th>
-            <th>PO Date</th>
-            <th>Distributor</th>
-            <th>Amount</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="po : ${pos}">
-            <td th:text="${po.id}"></td>
-            <td th:text="${po.poDate}"></td>
-            <td th:text="${po.distributor}"></td>
-            <td th:text="${po.amount}"></td>
-        </tr>
-        </tbody>
-    </table>
+<div class="container">
+    <div class="text-center mt-4 mb-4">
+        <a th:href="@{/products/add}" class="btn btn-primary">+ Ajouter un produit</a>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-4">
+        <!-- Loop through the product list -->
+        <div class="col" th:each="productSummary : ${productSummaries}">
+            <div class="card h-100">
+                <!-- Placeholder for product picture -->
+                <img th:src="@{|/images/product-${productSummary.coutuCode}.webp|}" class="card-img-top" alt="Product Image">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${productSummary.coutuDescription}">Product Description</h5>
+                    <p class="card-text">
+                        <strong>Coutu Code:</strong> <span th:text="${productSummary.coutuCode}">12345</span><br>
+                        <strong>Unit Format:</strong> <span th:text="${productSummary.size}">Unit Format</span><br>
+                        <strong>Units per Case:</strong> <span th:text="${productSummary.unitsPerCase}">10</span><br>
+                    </p>
+                </div>
+                <div class="card-footer text-center">
+                    <!-- Buttons for Show Details, Update, and Delete -->
+                    <a href="#" th:href="@{'/products/details/' + ${productSummary.productId}}" class="btn btn-primary btn-sm">Details</a>
+                    <a href="#" th:href="@{'/products/update/' + ${productSummary.productId}}" class="btn btn-success btn-sm">Modifier</a>
+                    <a href="#" th:href="@{'/products/delete/' + ${productSummary.productId}}" class="btn btn-danger btn-sm">Supprimer</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

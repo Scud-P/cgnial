@@ -23,7 +23,7 @@ public class ProductService {
     public List<ProductSummaryDTO> getAllProductSummaries() {
         return productRepository.findAll()
                 .stream()
-                .map(ProductSummaryDTO::new)
+                .map(product -> new ProductSummaryDTO(product))
                 .sorted(Comparator.comparingInt(ProductSummaryDTO::getCoutuCode))
                 .toList();
     }
