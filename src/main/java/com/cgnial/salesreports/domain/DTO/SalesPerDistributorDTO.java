@@ -3,10 +3,11 @@ package com.cgnial.salesreports.domain.DTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@AllArgsConstructor
+import java.util.List;
+
 @Data
-public class SalesPerDistributorPerYearDTO {
+@AllArgsConstructor
+public class SalesPerDistributorDTO {
     private String distributor;
-    private int year;
-    private double sales;
+    private List<YearlySalesDTO> yearlySales;
 }
