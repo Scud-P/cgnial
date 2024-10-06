@@ -26,6 +26,7 @@ public class POSSalesService {
     @Transactional
     public void clearAllPuresourceSales() {
         posSalesRepository.deleteAllByDistributorIgnoreCase("Puresource");
+        posSalesRepository.resetAutoIncrement();
     }
 
 }

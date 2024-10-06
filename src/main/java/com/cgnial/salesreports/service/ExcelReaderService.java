@@ -238,7 +238,7 @@ public class ExcelReaderService {
                             break;
                         case 9: // Amount
                             if (cell.getCellType() == CellType.NUMERIC) {
-                                po.setAmount(cell.getNumericCellValue());
+                                po.setAmount((double)cell.getNumericCellValue());
                                 logger.info("Found Amount: {}", po.getAmount());
                             }
                             break;
