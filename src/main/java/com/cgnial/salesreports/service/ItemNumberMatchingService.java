@@ -24,7 +24,7 @@ public class ItemNumberMatchingService {
     }
 
     public Integer determineProductCodeFromUnfiItemNumber(String unfiItemNumber) {
-        Integer coutuCode = productRepository.findCoutuCodeByPuresourceCode(unfiItemNumber);
+        Integer coutuCode = productRepository.findCoutuCodeByUnfiCode(unfiItemNumber);
         if (coutuCode == null ) {
             return 0;
         }
@@ -32,11 +32,10 @@ public class ItemNumberMatchingService {
     }
 
     public int determineProductCodeFromSatauItemNumber(String satauItemNumber) {
-        Integer coutuCode = productRepository.findCoutuCodeByPuresourceCode(satauItemNumber);
+        Integer coutuCode = productRepository.findCoutuCodeBySatauCode(satauItemNumber);
         if (coutuCode == null ) {
             return 0;
         }
         return  coutuCode;
     }
-
 }

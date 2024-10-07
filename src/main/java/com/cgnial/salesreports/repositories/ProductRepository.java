@@ -13,10 +13,11 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT p.coutuCode FROM Product p WHERE p.puresourceCode = :puresourceCode")
     Integer findCoutuCodeByPuresourceCode(@Param("puresourceCode") String puresourceCode);
 
-    int findCoutuCodeByUnfiCode(String puresourceCode);
+    @Query("SELECT p.coutuCode FROM Product p WHERE p.unfiCode = :unfiCode")
+    Integer findCoutuCodeByUnfiCode(@Param("unfiCode") String unfiCode);
 
     @Query("SELECT p.coutuCode FROM Product p WHERE p.satauCode = :satauCode")
-    Integer findCoutuCodeBySatauCode(String satauCode);
+    Integer findCoutuCodeBySatauCode(@Param("satauCode") String satauCode);
 }
 
 

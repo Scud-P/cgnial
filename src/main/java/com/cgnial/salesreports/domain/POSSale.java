@@ -2,6 +2,7 @@ package com.cgnial.salesreports.domain;
 
 import com.cgnial.salesreports.domain.parameter.PuresourcePOSParameter;
 import com.cgnial.salesreports.domain.parameter.SatauPOSParameter;
+import com.cgnial.salesreports.domain.parameter.UnfiPOSParameter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,6 +43,10 @@ public class POSSale {
     private int quarter;
     @Column(name="item_number")
     private int itemNumber;
+    @Column(name="order_quantity")
+    private int orderQuantity;
+    @Column(name="order_amount")
+    private double orderAmount;
 
     public POSSale(PuresourcePOSParameter parameter) {
         this.distributor = parameter.getDistributor();
@@ -70,5 +75,21 @@ public class POSSale {
         this.quantity = parameter.getQuantity();
         this.amount = parameter.getAmount();
         this.quarter = parameter.getQuarter();
+    }
+
+    public POSSale(UnfiPOSParameter parameter) {
+        this.distributor = parameter.getDistributor();
+        this.year = parameter.getYear();
+        this.customerName = parameter.getCustomerName();
+        this.customerGroup = parameter.getCustomerGroup();
+        this.address = parameter.getAddress();
+        this.city = parameter.getCity();
+        this.province = parameter.getProvince();
+        this.zipcode = parameter.getZipcode();
+        this.quantity = parameter.getQuantity();
+        this.amount = parameter.getAmount();
+        this.quarter = parameter.getQuarter();
+        this.orderQuantity = parameter.getOrderQuantity();
+        this.orderAmount = parameter.getOrderAmount();
     }
 }

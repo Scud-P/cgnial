@@ -3,7 +3,9 @@ package com.cgnial.salesreports.service;
 import com.cgnial.salesreports.domain.POSSale;
 import com.cgnial.salesreports.domain.parameter.PuresourcePOSParameter;
 import com.cgnial.salesreports.domain.parameter.SatauPOSParameter;
+import com.cgnial.salesreports.domain.parameter.UnfiPOSParameter;
 import com.cgnial.salesreports.repositories.POSSalesRepository;
+import com.cgnial.salesreports.util.DatesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,9 @@ public class POSSalesService {
 
     @Autowired
     private ItemNumberMatchingService itemNumberMatchingService;
+
+    @Autowired
+    private DatesUtil datesUtil;
 
     @Transactional
     public void loadAllPuresourceSales(List<PuresourcePOSParameter> sales) {
@@ -69,4 +74,30 @@ public class POSSalesService {
     public void resetAutoIncrement() {
         posSalesRepository.resetAutoIncrement();
     }
+
+    @Transactional
+    public void loadAllUnfiSales(List<UnfiPOSParameter> sales) {
+        List<POSSale> salesToPersist = sales.stream()
+                .map(parameter -> {
+                    // Determine the product code based on the unfiItemNumber
+                    int productCode = itemNumberMatchingService.determineProductCodeFromUnfiItemNumber(parameter.getUnfiItemNumber());
+                    int month = datesUtil.convertMonthToIntValue(parameter.getMonth());
+                    int quarter = datesUtil.determineQuarter(month);
+                    POSSale sale = new POSSale(parameter);
+                    sale.setItemNumber(productCode);
+                    sale.setMonth(month);
+                    sale.setQuarter(quarter);
+                    return sale;
+                })
+                .toList();
+        // Persist all sales to the repository
+        posSalesRepository.saveAll(salesToPersist);
+    }
+
+    @Transactional
+    public void clearAllUnfiSales() {
+        posSalesRepository.deleteAllByDistributorIgnoreCase("UNFI");
+    }
+
+
 }

@@ -5,6 +5,7 @@ import com.cgnial.salesreports.domain.PurchaseOrder;
 import com.cgnial.salesreports.domain.PurchaseOrderProduct;
 import com.cgnial.salesreports.domain.parameter.PuresourcePOSParameter;
 import com.cgnial.salesreports.domain.parameter.SatauPOSParameter;
+import com.cgnial.salesreports.domain.parameter.UnfiPOSParameter;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -276,7 +277,7 @@ public class ExcelReaderService {
         Sheet sheet = workbook.getSheetAt(0);
         List<SatauPOSParameter> sales = new ArrayList<>();
 
-        // Define which columns to skip by their index (mm/yy, customer number, brand code, product description)
+        // Define which columns to skip by their index
         Set<Integer> columnsToSkip = new HashSet<>(Arrays.asList(0, 2, 3, 4, 7, 9, 10, 11, 20));
 
         for (Row row : sheet) {
@@ -394,4 +395,140 @@ public class ExcelReaderService {
         return sales;
     }
 
+    public List<UnfiPOSParameter> readUNFIPOSParameters() throws IOException {
+        String fileLocation = "src/main/resources/excels/unfi.xlsx";
+        FileInputStream file = new FileInputStream(fileLocation);
+        Workbook workbook = new XSSFWorkbook(file);
+
+        Sheet sheet = workbook.getSheetAt(0);
+        List<UnfiPOSParameter> sales = new ArrayList<>();
+
+        // Define which columns to skip by their index
+        Set<Integer> columnsToSkip = new HashSet<>(Arrays.asList(0, 1, 2, 4, 5, 6, 7, 8, 14, 18, 24, 25, 26, 27, 28));
+
+        for (Row row : sheet) {
+            // Skip the header row
+            if (row.getRowNum() == 0) {
+                continue;
+            }
+
+            if (isRowEmpty(row)) {
+                break;
+            }
+
+            UnfiPOSParameter po = new UnfiPOSParameter();
+
+            int actualColumnIndex = 0;
+
+            for (int colIndex = 0; colIndex <= row.getLastCellNum(); colIndex++) {
+                // Check if the current column index is in the skip list
+                if (columnsToSkip.contains(colIndex)) {
+                    logger.info("Skipping column for UNFI {} as per configuration.", colIndex);
+                    continue;
+                }
+
+                Cell cell = row.getCell(colIndex);
+                if (cell != null) {
+                    // Only process non-skipped columns
+                    switch (actualColumnIndex) {
+                        case 0: // Year
+                            if (cell.getCellType() == CellType.STRING) {
+                                po.setUnfiItemNumber(cell.getStringCellValue());
+                                logger.info("Found UNFI Item Number: {}", po.getUnfiItemNumber());
+                            }
+                            break;
+                        case 1: // Customer Name
+                            if (cell.getCellType() == CellType.STRING) {
+                                po.setCustomerName(cell.getStringCellValue());
+                                logger.info("Found UNFI Customer Name: {}", po.getCustomerName());
+                            }
+                            break;
+                        case 2: // Address
+                            if (cell.getCellType() == CellType.STRING) {
+                                po.setAddress(cell.getStringCellValue());
+                                logger.info("Found UNFI Address Number: {}", po.getAddress());
+                            }
+                            break;
+                        case 3: // City
+                            if (cell.getCellType() == CellType.STRING) {
+                                po.setCity(cell.getStringCellValue());
+                                logger.info("Found UNFI City: {}", po.getCity());
+                            }
+                            break;
+                        case 4: // Province
+                            if (cell.getCellType() == CellType.STRING) {
+                                po.setProvince(cell.getStringCellValue());
+                                logger.info("Found UNFI Province: {}", po.getProvince());
+                            }
+                            break;
+                        case 5: // Zip
+                            if (cell.getCellType() == CellType.STRING) {
+                                po.setZipcode(cell.getStringCellValue());
+                                logger.info("Found UNFI Zipcode: {}", po.getZipcode());
+                            }
+                            break;
+                        case 6: // Zip
+                            if (cell.getCellType() == CellType.STRING) {
+                                po.setCustomerGroup(cell.getStringCellValue());
+                                logger.info("Found UNFI Zipcode: {}", po.getCustomerGroup());
+                            }
+                            break;
+
+                        case 7: //Year
+                            if(cell.getCellType() == CellType.NUMERIC) {
+                                po.setYear((int)cell.getNumericCellValue());
+                                logger.info("Found UNFI Year: {}", po.getYear());
+                            }
+                            break;
+                        case 8: //Month
+                            if(cell.getCellType() == CellType.STRING) {
+                                po.setMonth(cell.getStringCellValue());
+                                logger.info("Found UNFI Month: {}", po.getMonth());
+                            }
+                            break;
+                        case 9: // Quantity
+                            if (cell.getCellType() == CellType.NUMERIC) {
+                                po.setQuantity((int) cell.getNumericCellValue());
+                                logger.info("Found UNFI Quantity: {}", po.getQuantity());
+                            }
+                            break;
+                        case 10: // Order Quantity
+                            if (cell.getCellType() == CellType.NUMERIC) {
+                                po.setOrderQuantity((int) cell.getNumericCellValue());
+                                logger.info("Found UNFI Order Quantity: {}", po.getOrderQuantity());
+                            }
+                            break;
+                        case 11: // Amount
+                            if (cell.getCellType() == CellType.NUMERIC) {
+                                po.setAmount((double)cell.getNumericCellValue());
+                                logger.info("Found UNFI Amount: {}", po.getAmount());
+                            }
+                            break;
+                        case 12: // Order Amount
+                            if (cell.getCellType() == CellType.NUMERIC) {
+                                po.setOrderAmount((double)cell.getNumericCellValue());
+                                logger.info("Found UNFI Order Amount: {}", po.getOrderAmount());
+                            }
+                            break;
+                        case 13: // MCB amount
+                            if (cell.getCellType() == CellType.NUMERIC) {
+                                po.setMcbAmount((double)cell.getNumericCellValue());
+                                logger.info("Found UNFI MCB Amount: {}", po.getMcbAmount());
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                // Increment the actual column index only if not skipping
+                if (!columnsToSkip.contains(colIndex)) {
+                    actualColumnIndex++;
+                }
+            }
+            sales.add(po);
+        }
+        workbook.close();
+        file.close();
+        return sales;
+    }
 }

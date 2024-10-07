@@ -2,6 +2,7 @@ package com.cgnial.salesreports.controllers;
 
 import com.cgnial.salesreports.domain.parameter.PuresourcePOSParameter;
 import com.cgnial.salesreports.domain.parameter.SatauPOSParameter;
+import com.cgnial.salesreports.domain.parameter.UnfiPOSParameter;
 import com.cgnial.salesreports.service.ExcelReaderService;
 import com.cgnial.salesreports.service.POSSalesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +52,21 @@ public class POSSalesController {
 
     @GetMapping("/clearAllSatauSales")
     public ResponseEntity<String> clearAllSatauSales() {
-        posSalesService.clearAllPuresourceSales();
+        posSalesService.clearAllSatauSales();
         return ResponseEntity.ok("Sales database emptied from Satau Sales");
+    }
+
+    @GetMapping("/loadAllUnfiSales")
+    public ResponseEntity<String> loadAllUnfiSales() throws IOException {
+        List<UnfiPOSParameter> rawSales = excelReaderService.readUNFIPOSParameters();
+        posSalesService.loadAllUnfiSales(rawSales);
+        return ResponseEntity.ok(rawSales.size() + " UNFI sales loaded to database");
+    }
+
+    @GetMapping("/clearAllUnfiSales")
+    public ResponseEntity<String> clearAllUnfiSales() {
+        posSalesService.clearAllUnfiSales();
+        return ResponseEntity.ok("Sales database emptied from UNFI Sales");
     }
 
 }
