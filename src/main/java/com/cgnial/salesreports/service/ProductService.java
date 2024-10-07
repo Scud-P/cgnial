@@ -28,7 +28,7 @@ public class ProductService {
                 .toList();
     }
 
-    public Product getProductById(String id) {
+    public Product getProductById(int id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product with ID " + id + " not found"));
     }
@@ -61,7 +61,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void deleteProductById(String id) {
+    public void deleteProductById(int id) {
         Product productToDelete = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product with ID " + id + " not found"));
         productRepository.delete(productToDelete);

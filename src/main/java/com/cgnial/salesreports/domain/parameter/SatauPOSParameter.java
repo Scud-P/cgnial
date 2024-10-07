@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PuresourcePOSParameter {
-
-    private String distributor = "Puresource";
+public class SatauPOSParameter {
+    private String distributor = "Satau";
     private int year;
     private int month;
     private String customerName;
@@ -17,9 +16,9 @@ public class PuresourcePOSParameter {
     private String city;
     private String province;
     private String zipcode;
-    private String puresourceItemNumber;
+    private String satauItemNumber;
     private int quantity;
     private double amount;
     private int quarter;
-
+    private String customerGroup;
 }

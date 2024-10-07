@@ -1,6 +1,7 @@
 package com.cgnial.salesreports.domain;
 
 import com.cgnial.salesreports.domain.parameter.PuresourcePOSParameter;
+import com.cgnial.salesreports.domain.parameter.SatauPOSParameter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +24,8 @@ public class POSSale {
     private int month;
     @Column(name="customer_name")
     private String customerName;
+    @Column(name="customer_group")
+    private String customerGroup;
     @Column(name="address")
     private String address;
     @Column(name="city")
@@ -37,12 +40,29 @@ public class POSSale {
     private double amount;
     @Column(name="quarter")
     private int quarter;
+    @Column(name="item_number")
+    private int itemNumber;
 
     public POSSale(PuresourcePOSParameter parameter) {
         this.distributor = parameter.getDistributor();
         this.year = parameter.getYear();
         this.month = parameter.getMonth();
         this.customerName = parameter.getCustomerName();
+        this.address = parameter.getAddress();
+        this.city = parameter.getCity();
+        this.province = parameter.getProvince();
+        this.zipcode = parameter.getZipcode();
+        this.quantity = parameter.getQuantity();
+        this.amount = parameter.getAmount();
+        this.quarter = parameter.getQuarter();
+    }
+
+    public POSSale(SatauPOSParameter parameter) {
+        this.distributor = parameter.getDistributor();
+        this.year = parameter.getYear();
+        this.month = parameter.getMonth();
+        this.customerName = parameter.getCustomerName();
+        this.customerGroup = parameter.getCustomerGroup();
         this.address = parameter.getAddress();
         this.city = parameter.getCity();
         this.province = parameter.getProvince();

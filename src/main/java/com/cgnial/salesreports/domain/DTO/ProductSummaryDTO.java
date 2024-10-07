@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class ProductSummaryDTO {
 
-    private String productId;
+    private int productId;
     private int coutuCode;
     private String coutuDescription;
     private String size;

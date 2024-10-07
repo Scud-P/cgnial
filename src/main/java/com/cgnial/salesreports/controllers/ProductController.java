@@ -33,7 +33,7 @@ public class ProductController {
     }
 
     @GetMapping("/details/{id}")
-    public String getAllProducts(Model model, @PathVariable("id") String id) {
+    public String getAllProducts(Model model, @PathVariable("id") int id) {
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
         return "products/details";
@@ -60,14 +60,14 @@ public class ProductController {
     }
 
     @GetMapping("/update/{id}")
-    public String getUpdateProductForm(Model model, @PathVariable("id") String id) {
+    public String getUpdateProductForm(Model model, @PathVariable("id") int id) {
         Product product = productService.getProductById(id);
         model.addAttribute("product", product);
         return "products/update";
     }
 
     @PutMapping("/update/{id}")
-    public String updateProduct(Model model, @ModelAttribute Product product, @PathVariable("id") String id) {
+    public String updateProduct(Model model, @ModelAttribute Product product, @PathVariable("id") int id) {
         productService.updateProduct(product);
         List<ProductSummaryDTO> productSummaries = productService.getAllProductSummaries();
         model.addAttribute("productSummaries", productSummaries);
