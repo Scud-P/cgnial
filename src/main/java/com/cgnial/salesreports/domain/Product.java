@@ -34,6 +34,8 @@ public class Product {
     private String unfiCode;
     @Column(name="satau_code")
     private String satauCode;
+    @Column(name="old_satau_code")
+    private String oldSatauCode;
     @Column(name="puresource_code")
     private String puresourceCode;
     @Column(name="old_puresource_code")

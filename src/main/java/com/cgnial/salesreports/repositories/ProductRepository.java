@@ -26,6 +26,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Modifying
     @Query(value = "ALTER TABLE products AUTO_INCREMENT = 1", nativeQuery = true)
     void resetAutoIncrement();
+
+    // Table is products because it references the actual MySQL table, and not the entity, because of nativeQuery = true
+    @Query(value = "SELECT p.coutu_code FROM Products p WHERE p.old_satau_code = :oldSatauCode LIMIT 1", nativeQuery = true)
+    Integer findCoutuCodeByOldSatauCode(@Param("oldSatauCode") String oldSatauCode);
 }
 
 

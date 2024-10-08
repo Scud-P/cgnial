@@ -63,32 +63,38 @@ public class ExcelReaderService {
                 product.setUnitsPerCase((int) row.getCell(5).getNumericCellValue());
                 logger.info("ExcelReader found Units per Case: {}", product.getUnitsPerCase());
             }
+
             if (row.getCell(6) != null) {
-                product.setSatauCode(row.getCell(6).getStringCellValue());
+                product.setOldSatauCode(row.getCell(6).getStringCellValue());
+                logger.info("ExcelReader found old Satau Code: {}", product.getOldSatauCode());
+            }
+
+            if (row.getCell(7) != null) {
+                product.setSatauCode(row.getCell(7).getStringCellValue());
                 logger.info("ExcelReader found Satau Code: {}", product.getSatauCode());
             }
-            if (row.getCell(7) != null) {
-                product.setUnfiCode(row.getCell(7).getStringCellValue());
+            if (row.getCell(8) != null) {
+                product.setUnfiCode(row.getCell(8).getStringCellValue());
                 logger.info("ExcelReader found Unfi Code: {}", product.getUnfiCode());
             }
-            if (row.getCell(8) != null) {
-                product.setOldPuresourceCode(row.getCell(8).getStringCellValue());
+            if (row.getCell(9) != null) {
+                product.setOldPuresourceCode(row.getCell(9).getStringCellValue());
                 logger.info("ExcelReader found Puresource Code: {}", product.getOldPuresourceCode());
             }
-            if (row.getCell(9) != null) {
-                product.setPuresourceCode(row.getCell(9).getStringCellValue());
+            if (row.getCell(10) != null) {
+                product.setPuresourceCode(row.getCell(10).getStringCellValue());
                 logger.info("ExcelReader found oldPuresource Code: {}", product.getPuresourceCode());
             }
-            if (row.getCell(10) != null) {
-                product.setUnitUpc(row.getCell(10).getStringCellValue());
+            if (row.getCell(11) != null) {
+                product.setUnitUpc(row.getCell(11).getStringCellValue());
                 logger.info("ExcelReader found Unit UPC: {}", product.getUnitUpc());
             }
-            if (row.getCell(11) != null) {
-                product.setCaseUpc(row.getCell(11).getStringCellValue());
+            if (row.getCell(12) != null) {
+                product.setCaseUpc(row.getCell(12).getStringCellValue());
                 logger.info("ExcelReader found Case UPC: {}", product.getCaseUpc());
             }
-            if (row.getCell(12) != null) {
-                product.setCaseSize(row.getCell(12).getStringCellValue());
+            if (row.getCell(13) != null) {
+                product.setCaseSize(row.getCell(13).getStringCellValue());
                 logger.info("ExcelReader found Case Size: {}", product.getCaseSize());
             }
 
@@ -273,7 +279,7 @@ public class ExcelReaderService {
         FileInputStream file = new FileInputStream(fileLocation);
         Workbook workbook = new XSSFWorkbook(file);
 
-        Sheet sheet = workbook.getSheetAt(0);
+        Sheet sheet = workbook.getSheetAt(1);
         List<SatauPOSParameter> sales = new ArrayList<>();
 
         // Define which columns to skip by their index
@@ -297,7 +303,7 @@ public class ExcelReaderService {
             for (int colIndex = 0; colIndex <= row.getLastCellNum(); colIndex++) {
                 // Check if the current column index is in the skip list
                 if (columnsToSkip.contains(colIndex)) {
-                    logger.info("Skipping column for Satau {} as per configuration.", colIndex);
+//                    logger.info("Skipping column for Satau {} as per configuration.", colIndex);
                     continue;  // Skip this column
                 }
 
@@ -308,72 +314,72 @@ public class ExcelReaderService {
                         case 0: // Year
                             if (cell.getCellType() == CellType.NUMERIC) {
                                 po.setYear((int) cell.getNumericCellValue());
-                                logger.info("Found Satau Year: {}", po.getYear());
+//                                logger.info("Found Satau Year: {}", po.getYear());
                             }
                             break;
                         case 1: // Customer Name
                             if (cell.getCellType() == CellType.STRING) {
                                 po.setCustomerName(cell.getStringCellValue());
-                                logger.info("Found Satau Customer Name: {}", po.getCustomerName());
+//                                logger.info("Found Satau Customer Name: {}", po.getCustomerName());
                             }
                             break;
                         case 2: // Customer Group
                             if (cell.getCellType() == CellType.STRING) {
                                 po.setCustomerGroup(cell.getStringCellValue());
-                                logger.info("Found Satau Customer group: {}", po.getCustomerGroup());
+//                                logger.info("Found Satau Customer group: {}", po.getCustomerGroup());
                             }
                             break;
                         case 3: // Item Number
                             if (cell.getCellType() == CellType.STRING) {
                                 po.setSatauItemNumber(cell.getStringCellValue());
-                                logger.info("Found Satau Item number: {}", po.getSatauItemNumber());
+//                                logger.info("Found Satau Item number: {}", po.getSatauItemNumber());
                             }
                             break;
                         case 4: // Quantity
                             if (cell.getCellType() == CellType.NUMERIC) {
                                 po.setQuantity((int) cell.getNumericCellValue());
-                                logger.info("Found Satau Quantity: {}", po.getQuantity());
+//                                logger.info("Found Satau Quantity: {}", po.getQuantity());
                             }
                             break;
                         case 5: // Amount
                             if (cell.getCellType() == CellType.NUMERIC) {
                                 po.setAmount((double)cell.getNumericCellValue());
-                                logger.info("Found Satau Amount: {}", po.getAmount());
+//                                logger.info("Found Satau Amount: {}", po.getAmount());
                             }
                             break;
                         case 6: // Address
                             if (cell.getCellType() == CellType.STRING) {
                                 po.setAddress(cell.getStringCellValue());
-                                logger.info("Found Satau Address Number: {}", po.getAddress());
+//                                logger.info("Found Satau Address Number: {}", po.getAddress());
                             }
                             break;
                         case 7: // City
                             if (cell.getCellType() == CellType.STRING) {
                                 po.setCity(cell.getStringCellValue());
-                                logger.info("Found Satau City: {}", po.getCity());
+//                                logger.info("Found Satau City: {}", po.getCity());
                             }
                             break;
                         case 8: // Zip
                             if (cell.getCellType() == CellType.STRING) {
                                 po.setZipcode(cell.getStringCellValue());
-                                logger.info("Found Satau Zipcode: {}", po.getZipcode());
+//                                logger.info("Found Satau Zipcode: {}", po.getZipcode());
                             }
                             break;
                         case 9: // Province
                             if (cell.getCellType() == CellType.STRING) {
                                 po.setProvince(cell.getStringCellValue());
-                                logger.info("Found Satau Province: {}", po.getProvince());
+//                                logger.info("Found Satau Province: {}", po.getProvince());
                             }
                             break;
                         case 10: //Month
                             if(cell.getCellType() == CellType.NUMERIC) {
                                 po.setMonth((int)cell.getNumericCellValue());
-                                logger.info("Found Satau Month: {}", po.getProvince());
+//                                logger.info("Found Satau Month: {}", po.getProvince());
                             }
                         case 11: //Quarter
                             if(cell.getCellType() == CellType.NUMERIC) {
                                 po.setQuarter((int)cell.getNumericCellValue());
-                                logger.info("Found Satau Quarter: {}", po.getProvince());
+//                                logger.info("Found Satau Quarter: {}", po.getProvince());
                             }
                         default:
                             break;

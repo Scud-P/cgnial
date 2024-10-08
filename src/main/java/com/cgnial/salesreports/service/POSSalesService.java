@@ -69,17 +69,32 @@ public class POSSalesService {
 
     @Transactional
     public void loadAllSatauSales(List<SatauPOSParameter> sales) {
+
+        List<String> excludedCodes = getSatauExcludedCodes;
+        Set<String> missingCodes = new HashSet<>();
+
         // Stream through the sales, convert each parameter to a POSSale, and inject the product code
         List<POSSale> salesToPersist = sales.stream()
+                .filter(parameter -> !excludedCodes.contains(parameter.getSatauItemNumber()))
                 .map(parameter -> {
                     // Determine the product code based on the satauItemNumber
                     int productCode = itemNumberMatchingService.determineProductCodeFromSatauItemNumber(parameter.getSatauItemNumber());
+
+                    if (productCode == 0) {
+                        productCode = itemNumberMatchingService.determineProductCodeFromOldSatauItemNumber(parameter.getSatauItemNumber());
+                        logger.info("Found old Satau product code {}, assigning it to Coutu Code {}", parameter.getSatauItemNumber(), productCode);
+                    }
+
                     // Create a new POSSale object and set the product code
                     POSSale sale = new POSSale(parameter);
                     sale.setItemNumber(productCode);
+                    if(sale.getItemNumber() == 0) {
+                        missingCodes.add(parameter.getSatauItemNumber());
+                    }
                     return sale;
                 })
                 .toList();
+        logger.info("Missing Satau Codes: {} ", missingCodes);
         // Persist all sales to the repository
         posSalesRepository.saveAll(salesToPersist);
     }
@@ -122,4 +137,13 @@ public class POSSalesService {
             "SOL00083", "SOL00085", "SOL00084", "SOL00086", "SOL00066", "SOL00014", "SOL00069"
     );
 
+    private final List<String> getSatauExcludedCodes = List.of(
+            "CUIFN021", "CUIMC011", "CUIFR023", "CUILG001", "CUILG003", "CUILG005", "CUILG007",
+            "CUILG101", "CUILG103", "CUILG105", "CUILG107", "CUIFT021", "CUIFP021", "CUIFP013", "CUIFM021",
+            "CUIMT023", "CUIMT021", "CUIMC001", "CUIFA021", "CUIFQ021", "CUIFS021"
+    );
+
+    public void clearAllSales() {
+        posSalesRepository.deleteAll();
+    }
 }
