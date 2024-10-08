@@ -36,4 +36,6 @@ public class Product {
     private String satauCode;
     @Column(name="puresource_code")
     private String puresourceCode;
+    @Column(name="old_puresource_code")
+    private String oldPuresourceCode;
 }

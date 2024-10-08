@@ -23,6 +23,14 @@ public class ItemNumberMatchingService {
         return  coutuCode;
     }
 
+    public Integer determineProductCodeFromOldPuresourceItemNumber(String puresourceItemNumber) {
+        Integer coutuCode = productRepository.findCoutuCodeByOldPuresourceCode(puresourceItemNumber);
+        if (coutuCode == null ) {
+            return 0;
+        }
+        return  coutuCode;
+    }
+
     public Integer determineProductCodeFromUnfiItemNumber(String unfiItemNumber) {
         Integer coutuCode = productRepository.findCoutuCodeByUnfiCode(unfiItemNumber);
         if (coutuCode == null ) {

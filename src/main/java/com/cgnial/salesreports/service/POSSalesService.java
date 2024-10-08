@@ -6,14 +6,19 @@ import com.cgnial.salesreports.domain.parameter.SatauPOSParameter;
 import com.cgnial.salesreports.domain.parameter.UnfiPOSParameter;
 import com.cgnial.salesreports.repositories.POSSalesRepository;
 import com.cgnial.salesreports.util.DatesUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class POSSalesService {
+
+    private static final Logger logger = LoggerFactory.getLogger(POSSalesService.class);
+
 
     @Autowired
     private POSSalesRepository posSalesRepository;
@@ -27,21 +32,35 @@ public class POSSalesService {
     @Transactional
     public void loadAllPuresourceSales(List<PuresourcePOSParameter> sales) {
 
+        List<String> discontinuedProducts = getDiscontinuedPuresourceCodes;
+        Set<String> missingCodes = new HashSet<>();
+
         // Stream through the sales, convert each parameter to a POSSale, and inject the product code
         List<POSSale> salesToPersist = sales.stream()
+                //exclude discontinued products
+                .filter(parameter -> !discontinuedProducts.contains(parameter.getPuresourceItemNumber()))
                 .map(parameter -> {
                     // Determine the product code based on the puresourceItemNumber
                     int productCode = itemNumberMatchingService.determineProductCodeFromPuresourceItemNumber(parameter.getPuresourceItemNumber());
+
+                    if (productCode == 0) {
+                        productCode = itemNumberMatchingService.determineProductCodeFromOldPuresourceItemNumber(parameter.getPuresourceItemNumber());
+                        logger.info("Found old product code {}, assigning it to Coutu Code {}", parameter.getPuresourceItemNumber(), productCode);
+                    }
                     // Create a new POSSale object and set the product code
                     POSSale sale = new POSSale(parameter);
-                    sale.setItemNumber(productCode); // Assuming POSSale has a productCode field
+                    sale.setItemNumber(productCode);
+                    if(sale.getItemNumber() == 0) {
+                        missingCodes.add(parameter.getPuresourceItemNumber());
+                    }
                     return sale;
                 })
                 .toList();
-
+        logger.info("Missing Codes: {} ", missingCodes);
         // Persist all sales to the repository
         posSalesRepository.saveAll(salesToPersist);
     }
+
 
     @Transactional
     public void clearAllPuresourceSales() {
@@ -99,5 +118,8 @@ public class POSSalesService {
         posSalesRepository.deleteAllByDistributorIgnoreCase("UNFI");
     }
 
+    private final List<String> getDiscontinuedPuresourceCodes = List.of(
+            "SOL00083", "SOL00085", "SOL00084", "SOL00086", "SOL00066", "SOL00014", "SOL00069"
+    );
 
 }

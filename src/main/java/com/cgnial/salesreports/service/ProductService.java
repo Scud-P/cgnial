@@ -72,4 +72,14 @@ public class ProductService {
         List<Product> products = excelReaderService.readProductsExcelFile();
         return productRepository.saveAll(products);
     }
+
+    @Transactional
+    public void deleteAll() {
+        productRepository.deleteAll();
+    }
+
+    @Transactional
+    public void resetAutoIncrement() {
+        productRepository.resetAutoIncrement();
+    }
 }

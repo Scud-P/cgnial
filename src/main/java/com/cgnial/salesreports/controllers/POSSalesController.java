@@ -34,7 +34,7 @@ public class POSSalesController {
     public ResponseEntity<String> loadAllPuresourceSales() throws IOException {
         List<PuresourcePOSParameter> rawSales = excelReaderService.readPuresourcePOSParameters();
         posSalesService.loadAllPuresourceSales(rawSales);
-        return ResponseEntity.ok("Puresource sales loaded to database");
+        return ResponseEntity.ok("Puresource sales loaded to database. " + rawSales.size() + " transactions found");
     }
 
     @GetMapping("/clearAllPuresourceSales")

@@ -2,7 +2,6 @@ package com.cgnial.salesreports.service;
 
 import com.cgnial.salesreports.domain.Product;
 import com.cgnial.salesreports.domain.PurchaseOrder;
-import com.cgnial.salesreports.domain.PurchaseOrderProduct;
 import com.cgnial.salesreports.domain.parameter.PuresourcePOSParameter;
 import com.cgnial.salesreports.domain.parameter.SatauPOSParameter;
 import com.cgnial.salesreports.domain.parameter.UnfiPOSParameter;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
@@ -32,18 +30,15 @@ public class ExcelReaderService {
         List<Product> products = new ArrayList<>();
 
         for (Row row : sheet) {
-            // Skip the header row
             if (row.getRowNum() == 0) {
                 continue;
             }
 
             if (isRowEmpty(row)) {
-                break; // Stop the loop when reaching empty rows
+                break;
             }
-
             Product product = new Product();
 
-            // Check if the cell is not null before accessing it
             if (row.getCell(0) != null) {
                 product.setCoutuCode((int) row.getCell(0).getNumericCellValue());
                 logger.info("ExcelReader found Coutu code: {}", product.getCoutuCode());
@@ -77,19 +72,23 @@ public class ExcelReaderService {
                 logger.info("ExcelReader found Unfi Code: {}", product.getUnfiCode());
             }
             if (row.getCell(8) != null) {
-                product.setPuresourceCode(row.getCell(8).getStringCellValue());
-                logger.info("ExcelReader found Puresource Code: {}", product.getPuresourceCode());
+                product.setOldPuresourceCode(row.getCell(8).getStringCellValue());
+                logger.info("ExcelReader found Puresource Code: {}", product.getOldPuresourceCode());
             }
             if (row.getCell(9) != null) {
-                product.setUnitUpc(row.getCell(9).getStringCellValue());
-                logger.info("ExcelReader found Unit UPC: {}", product.getUnitUpc());
+                product.setPuresourceCode(row.getCell(9).getStringCellValue());
+                logger.info("ExcelReader found oldPuresource Code: {}", product.getPuresourceCode());
             }
             if (row.getCell(10) != null) {
-                product.setCaseUpc(row.getCell(10).getStringCellValue());
-                logger.info("ExcelReader found Case UPC: {}", product.getCaseUpc());
+                product.setUnitUpc(row.getCell(10).getStringCellValue());
+                logger.info("ExcelReader found Unit UPC: {}", product.getUnitUpc());
             }
             if (row.getCell(11) != null) {
-                product.setCaseSize(row.getCell(11).getStringCellValue());
+                product.setCaseUpc(row.getCell(11).getStringCellValue());
+                logger.info("ExcelReader found Case UPC: {}", product.getCaseUpc());
+            }
+            if (row.getCell(12) != null) {
+                product.setCaseSize(row.getCell(12).getStringCellValue());
                 logger.info("ExcelReader found Case Size: {}", product.getCaseSize());
             }
 
@@ -176,7 +175,7 @@ public class ExcelReaderService {
             for (int colIndex = 0; colIndex <= row.getLastCellNum(); colIndex++) {
                 // Check if the current column index is in the skip list
                 if (columnsToSkip.contains(colIndex)) {
-                    logger.info("Skipping column {} as per configuration.", colIndex);
+//                    logger.info("Skipping column {} as per configuration.", colIndex);
                     continue;  // Skip this column
                 }
 
@@ -187,67 +186,67 @@ public class ExcelReaderService {
                         case 0: // Year
                             if (cell.getCellType() == CellType.NUMERIC) {
                                 po.setYear((int) cell.getNumericCellValue());
-                                logger.info("Found Year: {}", po.getYear());
+//                                logger.info("Found Year: {}", po.getYear());
                             }
                             break;
                         case 1: // Month
                             if (cell.getCellType() == CellType.NUMERIC) {
                                 po.setMonth((int) cell.getNumericCellValue());
-                                logger.info("Found Month: {}", po.getMonth());
+//                                logger.info("Found Month: {}", po.getMonth());
                             }
                             break;
                         case 2: // Customer Name (this is now the 3rd column after skipping)
                             if (cell.getCellType() == CellType.STRING) {
                                 po.setCustomerName(cell.getStringCellValue());
-                                logger.info("Found Customer Name: {}", po.getCustomerName());
+//                                logger.info("Found Customer Name: {}", po.getCustomerName());
                             }
                             break;
                         case 3: // Address
                             if (cell.getCellType() == CellType.STRING) {
                                 po.setAddress(cell.getStringCellValue());
-                                logger.info("Found Address: {}", po.getAddress());
+//                                logger.info("Found Address: {}", po.getAddress());
                             }
                             break;
                         case 4: // City
                             if (cell.getCellType() == CellType.STRING) {
                                 po.setCity(cell.getStringCellValue());
-                                logger.info("Found City: {}", po.getCity());
+//                                logger.info("Found City: {}", po.getCity());
                             }
                             break;
                         case 5: // Province
                             if (cell.getCellType() == CellType.STRING) {
                                 po.setProvince(cell.getStringCellValue());
-                                logger.info("Found Province: {}", po.getProvince());
+//                                logger.info("Found Province: {}", po.getProvince());
                             }
                             break;
                         case 6: // Zipcode
                             if (cell.getCellType() == CellType.STRING) {
                                 po.setZipcode(cell.getStringCellValue());
-                                logger.info("Found Zipcode: {}", po.getZipcode());
+//                                logger.info("Found Zipcode: {}", po.getZipcode());
                             }
                             break;
                         case 7: // Item Number
                             if (cell.getCellType() == CellType.STRING) {
                                 po.setPuresourceItemNumber(cell.getStringCellValue());
-                                logger.info("Found Item Number: {}", po.getPuresourceItemNumber());
+//                                logger.info("Found Item Number: {}", po.getPuresourceItemNumber());
                             }
                             break;
                         case 8: // Quantity
                             if (cell.getCellType() == CellType.NUMERIC) {
                                 po.setQuantity((int) cell.getNumericCellValue());
-                                logger.info("Found Quantity: {}", po.getQuantity());
+//                                logger.info("Found Quantity: {}", po.getQuantity());
                             }
                             break;
                         case 9: // Amount
                             if (cell.getCellType() == CellType.NUMERIC) {
                                 po.setAmount((double)cell.getNumericCellValue());
-                                logger.info("Found Amount: {}", po.getAmount());
+//                                logger.info("Found Amount: {}", po.getAmount());
                             }
                             break;
                         case 10: // Quarter
                             if (cell.getCellType() == CellType.NUMERIC) {
                                 po.setQuarter((int) cell.getNumericCellValue());
-                                logger.info("Found Quarter: {}", po.getQuarter());
+//                                logger.info("Found Quarter: {}", po.getQuarter());
                             }
                             break;
                         default:
@@ -421,7 +420,6 @@ public class ExcelReaderService {
             int actualColumnIndex = 0;
 
             for (int colIndex = 0; colIndex <= row.getLastCellNum(); colIndex++) {
-                // Check if the current column index is in the skip list
                 if (columnsToSkip.contains(colIndex)) {
                     logger.info("Skipping column for UNFI {} as per configuration.", colIndex);
                     continue;
@@ -520,7 +518,6 @@ public class ExcelReaderService {
                             break;
                     }
                 }
-                // Increment the actual column index only if not skipping
                 if (!columnsToSkip.contains(colIndex)) {
                     actualColumnIndex++;
                 }
