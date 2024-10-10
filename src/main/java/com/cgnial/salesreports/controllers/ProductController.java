@@ -1,21 +1,21 @@
 package com.cgnial.salesreports.controllers;
 
+import com.cgnial.salesreports.domain.DTO.ProductDetailsDTO;
 import com.cgnial.salesreports.domain.DTO.ProductSummaryDTO;
 import com.cgnial.salesreports.domain.Product;
+import com.cgnial.salesreports.domain.parameter.ProductDetailsParameter;
 import com.cgnial.salesreports.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
 
-
-@Controller
+@CrossOrigin(origins = "http://localhost:3000")
+@RestController
 @RequestMapping("/products")
 public class ProductController {
 
@@ -26,65 +26,52 @@ public class ProductController {
 
 
     @GetMapping("/list")
-    public String getAllProducts(Model model) {
+    public ResponseEntity<List<ProductSummaryDTO>> getAllProducts() {
         List<ProductSummaryDTO> productSummaries = productService.getAllProductSummaries();
-        logger.info("List of products found by controller: {}", productSummaries);
-        model.addAttribute("productSummaries", productSummaries);
-        return "products/list";
+        return ResponseEntity.ok(productSummaries);
     }
 
     @GetMapping("/details/{id}")
-    public String getAllProducts(Model model, @PathVariable("id") int id) {
-        Product product = productService.getProductById(id);
-        model.addAttribute("product", product);
-        return "products/details";
+    public ResponseEntity<ProductDetailsDTO> getProductDetails(@PathVariable("id") int id) {
+        ProductDetailsDTO product = productService.getProductById(id);
+        return ResponseEntity.ok(product);
     }
 
     @GetMapping("/add")
-    public String getNewProductForm(Model model) {
+    public ResponseEntity<Product> getNewProductForm() {
         Product product = new Product();
-        model.addAttribute("product", product);
-        return "products/add";
+        return ResponseEntity.ok(product);
     }
 
-    @PostMapping("/add")
-    public String validateProduct(Model model,
-                                  @ModelAttribute Product product) {
-        try {
-            productService.saveProduct(product);
-            return "products/list";
+    //TODO Redo the below methods once React frontend is operational
 
-        } catch (RuntimeException e) {
-            model.addAttribute("error", e.getMessage());
-            return "error";
-        }
+    @PostMapping("/add")
+    public ResponseEntity<ProductDetailsParameter> validateProduct(ProductDetailsParameter product) {
+            productService.saveProduct(product);
+            return ResponseEntity.ok(product);
     }
 
     @GetMapping("/update/{id}")
-    public String getUpdateProductForm(Model model, @PathVariable("id") int id) {
-        Product product = productService.getProductById(id);
-        model.addAttribute("product", product);
-        return "products/update";
+    public ResponseEntity<ProductDetailsDTO> getUpdateProductForm(@PathVariable("id") int id) {
+        ProductDetailsDTO product = productService.getProductById(id);
+        return ResponseEntity.ok(product);
     }
 
     @PutMapping("/update/{id}")
-    public String updateProduct(Model model, @ModelAttribute Product product, @PathVariable("id") int id) {
-        productService.updateProduct(product);
+    public ResponseEntity<List<ProductSummaryDTO>> updateProduct(
+            @RequestBody ProductDetailsParameter product,
+            @PathVariable("id") int id) {
+        logger.info("Will try to update product with Id: {}", id);
+        logger.info("Received product from frontend: {}", product);
+        productService.updateProduct(product, id);
         List<ProductSummaryDTO> productSummaries = productService.getAllProductSummaries();
-        model.addAttribute("productSummaries", productSummaries);
-        return "products/list";
+        return ResponseEntity.ok(productSummaries);
     }
 
     @PostMapping("/batchAdd")
-    public String batchAddProducts(Model model) {
-        try {
+    public ResponseEntity<String> batchAddProducts() throws IOException {
             productService.saveAllProducts();
-            return "products/list";
-
-        } catch (RuntimeException | IOException e) {
-            model.addAttribute("error", e.getMessage());
-            return "error";
-        }
+            return ResponseEntity.ok("All products added");
     }
 
     @DeleteMapping("/batchDelete")
