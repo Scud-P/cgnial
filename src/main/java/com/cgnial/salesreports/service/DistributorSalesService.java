@@ -29,7 +29,7 @@ public class DistributorSalesService {
 
         return allPos.stream()
                 // Group by distributor first
-                .collect(Collectors.groupingBy(PurchaseOrderDTO::getDistributor))
+                .collect(Collectors.groupingBy(po -> po.getDistributor().toUpperCase()))
                 .entrySet()
                 .stream()
                 .map(entry -> {
@@ -62,7 +62,7 @@ public class DistributorSalesService {
 
         return allPos.stream()
                 // Group by distributor first
-                .collect(Collectors.groupingBy(PurchaseOrderDTO::getDistributor))
+                .collect(Collectors.groupingBy(po -> po.getDistributor().toUpperCase()))
                 .entrySet()
                 .stream()
                 .map(entry -> {

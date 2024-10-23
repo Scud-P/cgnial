@@ -47,8 +47,8 @@ public class ProductController {
 
     @PostMapping("/add")
     public ResponseEntity<ProductDetailsParameter> validateProduct(ProductDetailsParameter product) {
-            productService.saveProduct(product);
-            return ResponseEntity.ok(product);
+        productService.saveProduct(product);
+        return ResponseEntity.ok(product);
     }
 
     @GetMapping("/update/{id}")
@@ -70,14 +70,14 @@ public class ProductController {
 
     @PostMapping("/batchAdd")
     public ResponseEntity<String> batchAddProducts() throws IOException {
-            productService.saveAllProducts();
-            return ResponseEntity.ok("All products added");
+        productService.saveAllProducts();
+        return ResponseEntity.ok("All products added");
     }
 
     @DeleteMapping("/batchDelete")
     public ResponseEntity<String> batchDeleteProducts() {
-            productService.deleteAll();
-            return ResponseEntity.ok("Product repository emptied");
+        productService.deleteAll();
+        return ResponseEntity.ok("Product repository emptied");
     }
 
     @PostMapping("/resetAutoIncrement")

@@ -35,6 +35,7 @@ public class ProductDetailsDTO {
         this.unfiCode = product.getUnfiCode();
         this.satauCode = product.getSatauCode();
         this.puresourceCode = product.getPuresourceCode();
+        this.unitsPerCase = product.getUnitsPerCase();
     }
 
 }
