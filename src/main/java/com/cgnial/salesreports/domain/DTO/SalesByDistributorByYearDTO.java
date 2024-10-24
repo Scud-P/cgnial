@@ -8,6 +8,6 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class SalesByDistributorByYearDTO {
-    String Distributor;
-    List<SalesByYearDTO> salesByYear;
+    private String Distributor;
+    private List<SalesByYearDTO> salesByYear;
 }

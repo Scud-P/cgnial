@@ -1,14 +1,16 @@
 package com.cgnial.salesreports.controllers;
 
-import com.cgnial.salesreports.domain.PurchaseOrderProduct;
+import com.cgnial.salesreports.domain.DTO.*;
 import com.cgnial.salesreports.service.DistributorCasesService;
-import com.cgnial.salesreports.service.ProductQuantityReaderService;
-import com.cgnial.salesreports.service.PurchaseOrderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -16,22 +18,22 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class DistributorCasesController {
 
-    @Autowired
-    private ProductQuantityReaderService productQuantityReaderService;
+    private static final Logger logger = LoggerFactory.getLogger(DistributorCasesController.class);
 
     @Autowired
-    private PurchaseOrderService purchaseOrderService;
+    private DistributorCasesService distributorCasesService;
 
-    @PostMapping("/batchSave")
-    public ResponseEntity<String> loadAllCasesSales() throws IOException {
-        purchaseOrderService.saveAllPurchaseOrderCasesQuantity();
-        return ResponseEntity.ok("Case quantities saved to DB");
+    @GetMapping("/byDistributorByYear")
+    public ResponseEntity<List<CasesByDistributorByYearDTO>> salesByDistributorByYear() {
+        logger.info("Calling service...");
+        List<CasesByDistributorByYearDTO> cases = distributorCasesService.getCasesByDistributorByYearDTO();
+        return ResponseEntity.ok(cases);
     }
 
-    @DeleteMapping("/batchDelete")
-    public ResponseEntity<String> deleteAllCasesSales() throws IOException {
-        purchaseOrderService.deleteAllPurchaseOrderCasesQuantity();
-        return ResponseEntity.ok("Case quantities DB cleared");
+    @GetMapping("/byDistributorByYearByQuarter")
+    public ResponseEntity<List<CasesPerDistributorDTO>> salesByDistributorByYearByQuarter() {
+        List<CasesPerDistributorDTO> cases = distributorCasesService.getSalesByDistributorByYearAndQuarter();
+        return ResponseEntity.ok(cases);
     }
 
 }

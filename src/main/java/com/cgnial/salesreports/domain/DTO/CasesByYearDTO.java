@@ -1,71 +1,40 @@
-package com.cgnial.salesreports.domain;
+package com.cgnial.salesreports.domain.DTO;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="purchase_orders_quantities")
-public class PurchaseOrderProduct {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="id")
-    private long id;
-    @Column(name="po_date")
-    private String poDate;
-    @Column(name="distributor")
+@Data
+public class CasesByYearDTO {
+    private int year;
     private String distributor;
-    @Column(name="100")
     private int oneHundredQty;
-    @Column(name="102")
     private int oneHundredTwoQty;
-    @Column(name="103")
     private int oneHundredThreeQty;
-    @Column(name="104")
     private int oneHundredFourQty;
-    @Column(name="105")
     private int oneHundredFiveQty;
-    @Column(name="108")
     private int oneHundredEightQty;
-    @Column(name="110")
     private int oneHundredTenQty;
-    @Column(name="111")
     private int oneHundredElevenQty;
-    @Column(name="112")
     private int oneHundredTwelveQty;
-    @Column(name="113")
     private int oneHundredThirteenQty;
-    @Column(name="114")
     private int oneHundredFourteenQty;
-    @Column(name="115")
     private int oneHundredFifteenQty;
-    @Column(name="117")
     private int oneHundredSeventeenQty;
-    @Column(name="125")
     private int oneHundredTwentyFiveQty;
-    @Column(name="126")
     private int oneHundredTwentySixQty;
-    @Column(name="127")
     private int oneHundredTwentySevenQty;
-    @Column(name="128")
     private int oneHundredTwentyEightQty;
-    @Column(name="130")
     private int oneHundredThirtyQty;
-    @Column(name="131")
     private int oneHundredThirtyOneQty;
-    @Column(name="200")
     private int twoHundredQty;
-    @Column(name="202")
     private int twoHundredTwoQty;
-    @Column(name="204")
     private int twoHundredFourQty;
-    @Column(name="205")
     private int twoHundredFiveQty;
-    @Column(name="225")
     private int twoHundredTwentyFiveQty;
+
+    public CasesByYearDTO(int year, int oneHundredQty, int oneHundredTwoQty, int oneHundredThreeQty, int oneHundredFourQty, int oneHundredFiveQty, int oneHundredEightQty, int oneHundredTenQty, int oneHundredElevenQty, int oneHundredTwelveQty, int oneHundredThirteenQty, int oneHundredFourteenQty, int oneHundredFifteenQty, int oneHundredSeventeenQty, int oneHundredTwentyFiveQty, int oneHundredTwentySixQty, int oneHundredTwentySevenQty, int oneHundredTwentyEightQty, int oneHundredThirtyQty, int oneHundredThirtyOneQty, int twoHundredQty, int twoHundredTwoQty, int twoHundredFourQty, int twoHundredFiveQty, int twoHundredTwentyFiveQty) {
+    }
 }

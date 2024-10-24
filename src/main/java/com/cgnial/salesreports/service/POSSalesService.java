@@ -32,35 +32,34 @@ public class POSSalesService {
     @Transactional
     public void loadAllPuresourceSales(List<PuresourcePOSParameter> sales) {
 
-        List<String> discontinuedProducts = getDiscontinuedPuresourceCodes;
+        List<String> discontinuedProducts = getDiscontinuedPuresourceCodes();
         Set<String> missingCodes = new HashSet<>();
 
-        // Stream through the sales, convert each parameter to a POSSale, and inject the product code
         List<POSSale> salesToPersist = sales.stream()
-                //exclude discontinued products
                 .filter(parameter -> !discontinuedProducts.contains(parameter.getPuresourceItemNumber()))
                 .map(parameter -> {
-                    // Determine the product code based on the puresourceItemNumber
                     int productCode = itemNumberMatchingService.determineProductCodeFromPuresourceItemNumber(parameter.getPuresourceItemNumber());
 
                     if (productCode == 0) {
                         productCode = itemNumberMatchingService.determineProductCodeFromOldPuresourceItemNumber(parameter.getPuresourceItemNumber());
                         logger.info("Found old product code {}, assigning it to Coutu Code {}", parameter.getPuresourceItemNumber(), productCode);
                     }
-                    // Create a new POSSale object and set the product code
-                    POSSale sale = new POSSale(parameter);
-                    sale.setItemNumber(productCode);
-                    if(sale.getItemNumber() == 0) {
+
+                    if (productCode != 0) {
+                        POSSale sale = new POSSale(parameter);
+                        sale.setItemNumber(productCode);
+                        return sale;
+                    } else {
                         missingCodes.add(parameter.getPuresourceItemNumber());
+                        return null; // Return null to filter out later
                     }
-                    return sale;
                 })
+                .filter(Objects::nonNull) // Filter out nulls (i.e., sales with missing codes)
                 .toList();
+
         logger.info("Missing Codes: {} ", missingCodes);
-        // Persist all sales to the repository
         posSalesRepository.saveAll(salesToPersist);
     }
-
 
     @Transactional
     public void clearAllPuresourceSales() {
@@ -70,7 +69,7 @@ public class POSSalesService {
     @Transactional
     public void loadAllSatauSales(List<SatauPOSParameter> sales) {
 
-        List<String> excludedCodes = getSatauExcludedCodes;
+        List<String> excludedCodes = getSatauExcludedCodes();
         Set<String> missingCodes = new HashSet<>();
 
         // Stream through the sales, convert each parameter to a POSSale, and inject the product code
@@ -133,16 +132,21 @@ public class POSSalesService {
         posSalesRepository.deleteAllByDistributorIgnoreCase("UNFI");
     }
 
-    private final List<String> getDiscontinuedPuresourceCodes = List.of(
-            "SOL00083", "SOL00085", "SOL00084", "SOL00086", "SOL00066", "SOL00014", "SOL00069"
-    );
+    public List<String> getDiscontinuedPuresourceCodes() {
+        return List.of(
+                "SOL00083", "SOL00085", "SOL00084", "SOL00086", "SOL00066", "SOL00014", "SOL00069"
+        );
+    }
 
-    private final List<String> getSatauExcludedCodes = List.of(
-            "CUIFN021", "CUIMC011", "CUIFR023", "CUILG001", "CUILG003", "CUILG005", "CUILG007",
-            "CUILG101", "CUILG103", "CUILG105", "CUILG107", "CUIFT021", "CUIFP021", "CUIFP013", "CUIFM021",
-            "CUIMT023", "CUIMT021", "CUIMC001", "CUIFA021", "CUIFQ021", "CUIFS021"
-    );
 
+    public List<String> getSatauExcludedCodes() {
+        return List.of(
+                "CUIFN021", "CUIMC011", "CUIFR023", "CUILG001", "CUILG003", "CUILG005", "CUILG007",
+                "CUILG101", "CUILG103", "CUILG105", "CUILG107", "CUIFT021", "CUIFP021", "CUIFP013", "CUIFM021",
+                "CUIMT023", "CUIMT021", "CUIMC001", "CUIFA021", "CUIFQ021", "CUIFS021");
+    }
+
+    @Transactional
     public void clearAllSales() {
         posSalesRepository.deleteAll();
     }
