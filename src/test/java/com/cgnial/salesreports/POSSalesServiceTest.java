@@ -36,7 +36,7 @@ public class POSSalesServiceTest {
     private POSSalesService posSalesService;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
