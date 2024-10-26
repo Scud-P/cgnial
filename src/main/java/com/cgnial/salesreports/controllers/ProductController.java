@@ -43,8 +43,6 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-    //TODO Redo the below methods once React frontend is operational
-
     @PostMapping("/add")
     public ResponseEntity<ProductDetailsParameter> validateProduct(ProductDetailsParameter product) {
         productService.saveProduct(product);

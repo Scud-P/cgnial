@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    void testGetProductDetails() throws Exception {
+    public void testGetProductDetails() throws Exception {
         ProductDetailsDTO productDetails = new ProductDetailsDTO(firstProduct); // Populate DTO fields as needed
 
         when(productService.getProductById(firstProduct.getId())).thenReturn(productDetails);
@@ -74,7 +75,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    void testValidateProduct() throws Exception {
+    public void testValidateProduct() throws Exception {
         ProductDetailsParameter productParam = new ProductDetailsParameter();
         productParam.setId(1);
 
@@ -89,7 +90,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    void testUpdateProduct() throws Exception {
+    public void testUpdateProduct() throws Exception {
         int productId = 1;
         ProductDetailsParameter productParam = new ProductDetailsParameter();
         productParam.setId(productId);
@@ -110,7 +111,7 @@ public class ProductControllerTest {
     }
 
     @Test
-    void testBatchDeleteProducts() throws Exception {
+    public void testBatchDeleteProducts() throws Exception {
         doNothing().when(productService).deleteAll();
 
         mockMvc.perform(delete("/products/batchDelete"))
@@ -119,5 +120,41 @@ public class ProductControllerTest {
 
         verify(productService, times(1)).deleteAll();
     }
+
+    @Test
+    public void testBatchAddProducts() throws Exception {
+        List<Product> products = List.of(firstProduct);
+        when(productService.saveAllProducts()).thenReturn(products);
+
+        mockMvc.perform(post("/products/batchAdd"))
+                .andExpect(status().isOk());
+
+        verify(productService, times(1)).saveAllProducts();
+    }
+
+    @Test
+    public void testResetAutoIncrement() throws Exception {
+
+        doNothing().when(productService).resetAutoIncrement();
+
+        mockMvc.perform(post("/products/resetAutoIncrement"))
+                .andExpect(status().isOk());
+
+        verify(productService, times(1)).resetAutoIncrement();
+    }
+
+    @Test
+    public void testGetUpdateProductForm() throws Exception {
+        mockMvc.perform(get("/products/update/{id}", 1))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetNewProductForm() throws Exception {
+        mockMvc.perform(get("/products/add"))
+                .andExpect(status().isOk());
+    }
+
+
 
 }
