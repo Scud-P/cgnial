@@ -1,6 +1,7 @@
 package com.cgnial.salesreports.controllers;
 
 import com.cgnial.salesreports.domain.DTO.*;
+import com.cgnial.salesreports.domain.DTO.cases.CasesPerDistributorDTO;
 import com.cgnial.salesreports.service.DistributorCasesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ public class DistributorCasesController {
 
     @GetMapping("/byDistributorByYearByQuarter")
     public ResponseEntity<List<CasesPerDistributorDTO>> salesByDistributorByYearByQuarter() {
-        List<CasesPerDistributorDTO> cases = distributorCasesService.getSalesByDistributorByYearAndQuarter();
+        List<CasesPerDistributorDTO> cases = distributorCasesService.getCasesByDistributorByYearAndQuarter();
         return ResponseEntity.ok(cases);
     }
 

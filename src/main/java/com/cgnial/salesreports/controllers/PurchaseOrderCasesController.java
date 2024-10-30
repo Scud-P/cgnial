@@ -1,6 +1,5 @@
 package com.cgnial.salesreports.controllers;
 
-import com.cgnial.salesreports.service.ProductQuantityReaderService;
 import com.cgnial.salesreports.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +11,6 @@ import java.io.IOException;
 @RequestMapping("/cases")
 @CrossOrigin(origins = "http://localhost:3000")
 public class PurchaseOrderCasesController {
-
-    @Autowired
-    private ProductQuantityReaderService productQuantityReaderService;
 
     @Autowired
     private PurchaseOrderService purchaseOrderService;

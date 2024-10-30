@@ -1,6 +1,6 @@
 package com.cgnial.salesreports;
 
-import com.cgnial.salesreports.domain.DTO.CaseOrderDTO;
+import com.cgnial.salesreports.domain.DTO.cases.CaseOrderDTO;
 import com.cgnial.salesreports.domain.DTO.CasesByDistributorByYearDTO;
 import com.cgnial.salesreports.domain.DTO.CasesByYearDTO;
 import com.cgnial.salesreports.domain.PurchaseOrderProduct;

@@ -2,6 +2,9 @@ package com.cgnial.salesreports.util;
 
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 @Service
 public class DatesUtil {
 
@@ -30,5 +33,15 @@ public class DatesUtil {
 
     public int determineQuarter(int month) {
         return (month - 1) / 3 + 1;
+    }
+
+    public int determineMonth(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        return LocalDate.parse(dateString, formatter).getMonthValue();
+    }
+
+    public int determineYear(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        return LocalDate.parse(dateString, formatter).getYear();
     }
 }

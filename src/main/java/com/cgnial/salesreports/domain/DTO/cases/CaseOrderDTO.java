@@ -1,16 +1,18 @@
-package com.cgnial.salesreports.domain.DTO;
+package com.cgnial.salesreports.domain.DTO.cases;
 
 import com.cgnial.salesreports.domain.PurchaseOrderProduct;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CaseOrderDTO {
-
     private long id;
-    private int  year;
+    private int year;
+    private int quarter;
     private String distributor;
     private int oneHundredQty;
     private int oneHundredTwoQty;
@@ -39,6 +41,7 @@ public class CaseOrderDTO {
 
     public CaseOrderDTO(PurchaseOrderProduct po) {
         this.id = po.getId();
+        this.quarter = extractQuarter(po.getPoDate());
         this.year = extractYear(po.getPoDate());
         this.distributor = po.getDistributor();
         this.oneHundredQty = po.getOneHundredQty();
@@ -71,6 +74,13 @@ public class CaseOrderDTO {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         LocalDate date = LocalDate.parse(dateString, formatter);
         return date.getYear();
+    }
+
+    public int extractQuarter(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        LocalDate date = LocalDate.parse(dateString, formatter);
+        int month = date.getMonthValue();
+        return (month - 1) / 3 + 1;
     }
 
 }

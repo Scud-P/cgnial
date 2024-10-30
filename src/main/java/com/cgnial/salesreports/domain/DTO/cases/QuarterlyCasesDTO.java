@@ -1,14 +1,12 @@
-package com.cgnial.salesreports.domain.DTO;
+package com.cgnial.salesreports.domain.DTO.cases;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-public class CasesByYearTestDTO {
-    private int year;
+@AllArgsConstructor
+public class QuarterlyCasesDTO {
+    private int quarter;
     private int oneHundredQty;
     private int oneHundredTwoQty;
     private int oneHundredThreeQty;
@@ -34,3 +32,4 @@ public class CasesByYearTestDTO {
     private int twoHundredFiveQty;
     private int twoHundredTwentyFiveQty;
 }
+
