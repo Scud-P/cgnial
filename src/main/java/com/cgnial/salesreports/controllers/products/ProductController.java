@@ -1,4 +1,4 @@
-package com.cgnial.salesreports.controllers;
+package com.cgnial.salesreports.controllers.products;
 
 import com.cgnial.salesreports.domain.DTO.ProductDetailsDTO;
 import com.cgnial.salesreports.domain.DTO.ProductSummaryDTO;

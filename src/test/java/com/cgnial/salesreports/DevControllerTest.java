@@ -1,6 +1,6 @@
 package com.cgnial.salesreports;
 
-import com.cgnial.salesreports.controllers.DevController;
+import com.cgnial.salesreports.controllers.dev.DevController;
 import com.cgnial.salesreports.service.POSSalesService;
 import com.cgnial.salesreports.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;

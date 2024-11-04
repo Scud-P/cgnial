@@ -1,4 +1,4 @@
-package com.cgnial.salesreports.controllers;
+package com.cgnial.salesreports.controllers.dev;
 
 import com.cgnial.salesreports.service.PurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;

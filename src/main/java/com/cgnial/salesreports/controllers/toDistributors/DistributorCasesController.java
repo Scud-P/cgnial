@@ -1,4 +1,4 @@
-package com.cgnial.salesreports.controllers;
+package com.cgnial.salesreports.controllers.toDistributors;
 
 import com.cgnial.salesreports.domain.DTO.*;
 import com.cgnial.salesreports.domain.DTO.cases.CasesPerDistributorDTO;

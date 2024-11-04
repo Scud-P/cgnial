@@ -1,6 +1,5 @@
 package com.cgnial.salesreports.service;
 
-import com.cgnial.salesreports.controllers.ProductController;
 import com.cgnial.salesreports.domain.DTO.ProductDetailsDTO;
 import com.cgnial.salesreports.domain.DTO.ProductSummaryDTO;
 import com.cgnial.salesreports.domain.Product;

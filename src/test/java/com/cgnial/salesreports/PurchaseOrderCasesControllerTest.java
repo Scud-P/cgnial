@@ -1,6 +1,6 @@
 package com.cgnial.salesreports;
 
-import com.cgnial.salesreports.controllers.PurchaseOrderCasesController;
+import com.cgnial.salesreports.controllers.dev.PurchaseOrderCasesController;
 import com.cgnial.salesreports.service.PurchaseOrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

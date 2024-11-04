@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class DistributorSalesService {
+public class SalesToDistributorsService {
 
     @Autowired
     private PurchaseOrderRepository purchaseOrderRepository;

@@ -1,5 +1,6 @@
-package com.cgnial.salesreports.domain.DTO.cases;
+package com.cgnial.salesreports.domain.DTO.distributorSales;
 
+import com.cgnial.salesreports.domain.DTO.cases.POSSaleDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,11 +11,11 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class YearlySatauSalesDTO {
+public class YearlyDistributorSalesDTO {
     private int year;
-    private List<QuarterlySatauSalesDTO> quarterlySales;
+    private List<QuarterlyDistributorSalesDTO> quarterlySales;
 
-    public YearlySatauSalesDTO(POSSaleDTO saleDTO) {
+    public YearlyDistributorSalesDTO(POSSaleDTO saleDTO) {
         this.year = saleDTO.getYear();
         this.quarterlySales = new ArrayList<>();
     }

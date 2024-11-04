@@ -1,8 +1,8 @@
-package com.cgnial.salesreports.controllers;
+package com.cgnial.salesreports.controllers.toDistributors;
 
 import com.cgnial.salesreports.domain.DTO.SalesByDistributorByYearDTO;
 import com.cgnial.salesreports.domain.DTO.SalesPerDistributorDTO;
-import com.cgnial.salesreports.service.DistributorSalesService;
+import com.cgnial.salesreports.service.SalesToDistributorsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,17 +18,17 @@ import java.util.List;
 public class DistributorSalesController {
 
     @Autowired
-    private DistributorSalesService distributorSalesService;
+    private SalesToDistributorsService salesToDistributorsService;
 
     @GetMapping("/byDistributorByYear")
     public ResponseEntity<List<SalesByDistributorByYearDTO>> salesByDistributorByYear() {
-        List<SalesByDistributorByYearDTO> sales = distributorSalesService.getSalesByDistributorByYear();
+        List<SalesByDistributorByYearDTO> sales = salesToDistributorsService.getSalesByDistributorByYear();
         return ResponseEntity.ok(sales);
     }
 
     @GetMapping("/byDistributorByYearByQuarter")
     public ResponseEntity<List<SalesPerDistributorDTO>> salesByDistributorByYearByQuarter() {
-        List<SalesPerDistributorDTO> sales = distributorSalesService.getSalesByDistributorByYearAndQuarter();
+        List<SalesPerDistributorDTO> sales = salesToDistributorsService.getSalesByDistributorByYearAndQuarter();
         return ResponseEntity.ok(sales);
     }
 

@@ -1,4 +1,4 @@
-package com.cgnial.salesreports.controllers;
+package com.cgnial.salesreports.controllers.dev;
 
 import com.cgnial.salesreports.domain.parameter.PuresourcePOSParameter;
 import com.cgnial.salesreports.domain.parameter.SatauPOSParameter;

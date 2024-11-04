@@ -1,6 +1,6 @@
 package com.cgnial.salesreports;
 
-import com.cgnial.salesreports.controllers.DistributorCasesController;
+import com.cgnial.salesreports.controllers.toDistributors.DistributorCasesController;
 import com.cgnial.salesreports.domain.DTO.CasesByDistributorByYearDTO;
 import com.cgnial.salesreports.domain.DTO.CasesByYearDTO;
 import com.cgnial.salesreports.service.DistributorCasesService;

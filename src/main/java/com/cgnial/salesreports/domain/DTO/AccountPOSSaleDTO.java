@@ -1,5 +1,6 @@
 package com.cgnial.salesreports.domain.DTO;
 
+import com.cgnial.salesreports.domain.POSSale;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,4 +14,6 @@ public class AccountPOSSaleDTO {
     private double amount;
     private int year;
 
+    public AccountPOSSaleDTO(POSSale posSale) {
+    }
 }

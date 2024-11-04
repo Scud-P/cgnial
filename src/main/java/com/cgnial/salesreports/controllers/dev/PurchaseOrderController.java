@@ -1,8 +1,5 @@
-package com.cgnial.salesreports.controllers;
+package com.cgnial.salesreports.controllers.dev;
 
-import com.cgnial.salesreports.domain.DTO.PurchaseOrderDTO;
-import com.cgnial.salesreports.domain.DTO.SalesByDistributorByYearDTO;
-import com.cgnial.salesreports.service.DistributorSalesService;
 import com.cgnial.salesreports.service.PurchaseOrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/po")

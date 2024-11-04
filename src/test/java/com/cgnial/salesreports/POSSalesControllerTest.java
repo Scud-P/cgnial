@@ -1,6 +1,6 @@
 package com.cgnial.salesreports;
 
-import com.cgnial.salesreports.controllers.POSSalesController;
+import com.cgnial.salesreports.controllers.dev.POSSalesController;
 import com.cgnial.salesreports.domain.parameter.PuresourcePOSParameter;
 import com.cgnial.salesreports.domain.parameter.SatauPOSParameter;
 import com.cgnial.salesreports.domain.parameter.UnfiPOSParameter;
