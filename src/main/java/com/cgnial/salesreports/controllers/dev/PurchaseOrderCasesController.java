@@ -1,6 +1,6 @@
 package com.cgnial.salesreports.controllers.dev;
 
-import com.cgnial.salesreports.service.PurchaseOrderService;
+import com.cgnial.salesreports.service.loading.PurchaseOrderLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import java.io.IOException;
 public class PurchaseOrderCasesController {
 
     @Autowired
-    private PurchaseOrderService purchaseOrderService;
+    private PurchaseOrderLoaderService purchaseOrderService;
 
     @PostMapping("/batchSave")
     public ResponseEntity<String> loadAllCasesSales() throws IOException {

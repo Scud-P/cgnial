@@ -1,8 +1,8 @@
 package com.cgnial.salesreports.controllers.toDistributors;
 
-import com.cgnial.salesreports.domain.DTO.*;
+import com.cgnial.salesreports.domain.DTO.cases.CasesByDistributorByYearDTO;
 import com.cgnial.salesreports.domain.DTO.cases.CasesPerDistributorDTO;
-import com.cgnial.salesreports.service.DistributorCasesService;
+import com.cgnial.salesreports.service.toDistributors.DistributorCasesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

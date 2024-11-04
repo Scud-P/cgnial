@@ -1,7 +1,7 @@
 package com.cgnial.salesreports.controllers.distributors;
 
 import com.cgnial.salesreports.domain.DTO.distributorSales.YearlyDistributorSalesDTO;
-import com.cgnial.salesreports.service.distributorsales.DistributorsSalesService;
+import com.cgnial.salesreports.service.distributorSales.DistributorsSalesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,10 +1,10 @@
 package com.cgnial.salesreports.controllers.dev;
 
-import com.cgnial.salesreports.domain.parameter.PuresourcePOSParameter;
-import com.cgnial.salesreports.domain.parameter.SatauPOSParameter;
-import com.cgnial.salesreports.domain.parameter.UnfiPOSParameter;
-import com.cgnial.salesreports.service.ExcelReaderService;
-import com.cgnial.salesreports.service.POSSalesService;
+import com.cgnial.salesreports.domain.parameter.distributorLoading.PuresourcePOSParameter;
+import com.cgnial.salesreports.domain.parameter.distributorLoading.SatauPOSParameter;
+import com.cgnial.salesreports.domain.parameter.distributorLoading.UnfiPOSParameter;
+import com.cgnial.salesreports.service.loading.ExcelReaderService;
+import com.cgnial.salesreports.service.loading.POSSalesLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,53 +19,53 @@ import java.util.List;
 public class POSSalesController {
 
     @Autowired
-    private POSSalesService posSalesService;
+    private POSSalesLoaderService posSalesLoaderService;
 
     @Autowired
     private ExcelReaderService excelReaderService;
 
     @GetMapping("/resetAutoIncrement")
     public ResponseEntity<String> resetAutoIncrement() {
-        posSalesService.resetAutoIncrement();
+        posSalesLoaderService.resetAutoIncrement();
         return ResponseEntity.ok("AutoIncrement has been reset");
     }
 
     @GetMapping("/loadAllPuresourceSales")
     public ResponseEntity<String> loadAllPuresourceSales() throws IOException {
         List<PuresourcePOSParameter> rawSales = excelReaderService.readPuresourcePOSParameters();
-        posSalesService.loadAllPuresourceSales(rawSales);
+        posSalesLoaderService.loadAllPuresourceSales(rawSales);
         return ResponseEntity.ok("Puresource sales loaded to database. " + rawSales.size() + " transactions found");
     }
 
     @GetMapping("/clearAllPuresourceSales")
     public ResponseEntity<String> clearAllPuresourceSales() {
-        posSalesService.clearAllPuresourceSales();
+        posSalesLoaderService.clearAllPuresourceSales();
         return ResponseEntity.ok("Sales database emptied from Puresource Sales");
     }
 
     @GetMapping("/loadAllSatauSales")
     public ResponseEntity<String> loadAllSatauSales() throws IOException {
         List<SatauPOSParameter> rawSales = excelReaderService.readSatauPOSParameters();
-        posSalesService.loadAllSatauSales(rawSales);
+        posSalesLoaderService.loadAllSatauSales(rawSales);
         return ResponseEntity.ok(rawSales.size() + " Satau sales loaded to database");
     }
 
     @GetMapping("/clearAllSatauSales")
     public ResponseEntity<String> clearAllSatauSales() {
-        posSalesService.clearAllSatauSales();
+        posSalesLoaderService.clearAllSatauSales();
         return ResponseEntity.ok("Sales database emptied from Satau Sales");
     }
 
     @GetMapping("/loadAllUnfiSales")
     public ResponseEntity<String> loadAllUnfiSales() throws IOException {
         List<UnfiPOSParameter> rawSales = excelReaderService.readUNFIPOSParameters();
-        posSalesService.loadAllUnfiSales(rawSales);
+        posSalesLoaderService.loadAllUnfiSales(rawSales);
         return ResponseEntity.ok(rawSales.size() + " UNFI sales loaded to database");
     }
 
     @GetMapping("/clearAllUnfiSales")
     public ResponseEntity<String> clearAllUnfiSales() {
-        posSalesService.clearAllUnfiSales();
+        posSalesLoaderService.clearAllUnfiSales();
         return ResponseEntity.ok("Sales database emptied from UNFI Sales");
     }
 

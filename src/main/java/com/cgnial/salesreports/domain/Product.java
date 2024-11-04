@@ -1,6 +1,6 @@
 package com.cgnial.salesreports.domain;
 
-import com.cgnial.salesreports.domain.parameter.ProductDetailsParameter;
+import com.cgnial.salesreports.domain.parameter.products.ProductDetailsParameter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

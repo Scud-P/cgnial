@@ -1,8 +1,8 @@
 package com.cgnial.salesreports;
 
 import com.cgnial.salesreports.controllers.dev.DevController;
-import com.cgnial.salesreports.service.POSSalesService;
-import com.cgnial.salesreports.service.ProductService;
+import com.cgnial.salesreports.service.loading.POSSalesLoaderService;
+import com.cgnial.salesreports.service.products.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,7 +23,7 @@ public class DevControllerTest {
     private MockMvc mockMvc;
 
     @Mock
-    private POSSalesService posSalesService;
+    private POSSalesLoaderService posSalesLoaderService;
 
     @Mock
     private ProductService productService;
@@ -40,8 +40,8 @@ public class DevControllerTest {
     @Test
     public void testClearEverything() throws Exception {
 
-        doNothing().when(posSalesService).clearAllSales();
-        doNothing().when(posSalesService).resetAutoIncrement();
+        doNothing().when(posSalesLoaderService).clearAllSales();
+        doNothing().when(posSalesLoaderService).resetAutoIncrement();
         doNothing().when(productService).deleteAll();
         doNothing().when(productService).resetAutoIncrement();
 
@@ -49,8 +49,8 @@ public class DevControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("All databases cleared and autoincrement reset"));
 
-        verify(posSalesService, times(1)).clearAllSales();
-        verify(posSalesService, times(1)).resetAutoIncrement();
+        verify(posSalesLoaderService, times(1)).clearAllSales();
+        verify(posSalesLoaderService, times(1)).resetAutoIncrement();
         verify(productService, times(1)).deleteAll();
         verify(productService, times(1)).resetAutoIncrement();
     }

@@ -1,6 +1,5 @@
 package com.cgnial.salesreports.domain.DTO.distributorSales;
 
-import com.cgnial.salesreports.domain.DTO.cases.POSSaleDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

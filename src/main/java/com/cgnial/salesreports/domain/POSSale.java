@@ -1,8 +1,8 @@
 package com.cgnial.salesreports.domain;
 
-import com.cgnial.salesreports.domain.parameter.PuresourcePOSParameter;
-import com.cgnial.salesreports.domain.parameter.SatauPOSParameter;
-import com.cgnial.salesreports.domain.parameter.UnfiPOSParameter;
+import com.cgnial.salesreports.domain.parameter.distributorLoading.PuresourcePOSParameter;
+import com.cgnial.salesreports.domain.parameter.distributorLoading.SatauPOSParameter;
+import com.cgnial.salesreports.domain.parameter.distributorLoading.UnfiPOSParameter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

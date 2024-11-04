@@ -1,7 +1,7 @@
 package com.cgnial.salesreports;
 
 import com.cgnial.salesreports.repositories.ProductRepository;
-import com.cgnial.salesreports.service.ItemNumberMatchingService;
+import com.cgnial.salesreports.service.loading.ItemNumberMatchingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

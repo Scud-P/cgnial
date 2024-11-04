@@ -1,9 +1,9 @@
 package com.cgnial.salesreports;
 
 import com.cgnial.salesreports.controllers.toDistributors.DistributorCasesController;
-import com.cgnial.salesreports.domain.DTO.CasesByDistributorByYearDTO;
-import com.cgnial.salesreports.domain.DTO.CasesByYearDTO;
-import com.cgnial.salesreports.service.DistributorCasesService;
+import com.cgnial.salesreports.domain.DTO.cases.CasesByDistributorByYearDTO;
+import com.cgnial.salesreports.domain.DTO.cases.CasesByYearDTO;
+import com.cgnial.salesreports.service.toDistributors.DistributorCasesService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

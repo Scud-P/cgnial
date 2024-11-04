@@ -1,10 +1,10 @@
 package com.cgnial.salesreports.controllers.products;
 
-import com.cgnial.salesreports.domain.DTO.ProductDetailsDTO;
-import com.cgnial.salesreports.domain.DTO.ProductSummaryDTO;
+import com.cgnial.salesreports.domain.DTO.products.ProductDetailsDTO;
+import com.cgnial.salesreports.domain.DTO.products.ProductSummaryDTO;
 import com.cgnial.salesreports.domain.Product;
-import com.cgnial.salesreports.domain.parameter.ProductDetailsParameter;
-import com.cgnial.salesreports.service.ProductService;
+import com.cgnial.salesreports.domain.parameter.products.ProductDetailsParameter;
+import com.cgnial.salesreports.service.products.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

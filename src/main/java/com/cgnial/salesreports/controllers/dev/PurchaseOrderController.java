@@ -1,6 +1,6 @@
 package com.cgnial.salesreports.controllers.dev;
 
-import com.cgnial.salesreports.service.PurchaseOrderService;
+import com.cgnial.salesreports.service.loading.PurchaseOrderLoaderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ public class PurchaseOrderController {
     private static final Logger logger = LoggerFactory.getLogger(PurchaseOrderController.class);
 
     @Autowired
-    private PurchaseOrderService purchaseOrderService;
+    private PurchaseOrderLoaderService purchaseOrderService;
 
     @DeleteMapping("/batchDelete")
     public ResponseEntity<String> deleteAllPurchaseOrders() {

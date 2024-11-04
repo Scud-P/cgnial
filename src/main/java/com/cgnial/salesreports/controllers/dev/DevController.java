@@ -1,7 +1,7 @@
 package com.cgnial.salesreports.controllers.dev;
 
-import com.cgnial.salesreports.service.POSSalesService;
-import com.cgnial.salesreports.service.ProductService;
+import com.cgnial.salesreports.service.loading.POSSalesLoaderService;
+import com.cgnial.salesreports.service.products.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DevController {
 
     @Autowired
-    private POSSalesService posSalesService;
+    private POSSalesLoaderService posSalesLoaderService;
 
     @Autowired
     private ProductService productService;
@@ -21,8 +21,8 @@ public class DevController {
 
     @DeleteMapping("/clear")
     private ResponseEntity<String> clearEverything() {
-        posSalesService.clearAllSales();
-        posSalesService.resetAutoIncrement();
+        posSalesLoaderService.clearAllSales();
+        posSalesLoaderService.resetAutoIncrement();
         productService.deleteAll();
         productService.resetAutoIncrement();
         return ResponseEntity.ok("All databases cleared and autoincrement reset");

@@ -1,7 +1,7 @@
 package com.cgnial.salesreports;
 
 import com.cgnial.salesreports.controllers.dev.PurchaseOrderController;
-import com.cgnial.salesreports.service.PurchaseOrderService;
+import com.cgnial.salesreports.service.loading.PurchaseOrderLoaderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,7 +25,7 @@ public class PurchaseOrderControllerTest {
     private MockMvc mockMvc;
 
     @Mock
-    private PurchaseOrderService service;
+    private PurchaseOrderLoaderService service;
 
     @InjectMocks
     private PurchaseOrderController controller;

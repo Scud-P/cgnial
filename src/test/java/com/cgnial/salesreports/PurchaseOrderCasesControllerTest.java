@@ -1,7 +1,7 @@
 package com.cgnial.salesreports;
 
 import com.cgnial.salesreports.controllers.dev.PurchaseOrderCasesController;
-import com.cgnial.salesreports.service.PurchaseOrderService;
+import com.cgnial.salesreports.service.loading.PurchaseOrderLoaderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class PurchaseOrderCasesControllerTest {
     @Mock
-    private PurchaseOrderService purchaseOrderService;
+    private PurchaseOrderLoaderService purchaseOrderService;
 
     @InjectMocks
     private PurchaseOrderCasesController purchaseOrderCasesController;

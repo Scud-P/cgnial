@@ -1,12 +1,12 @@
 package com.cgnial.salesreports;
 
-import com.cgnial.salesreports.domain.DTO.ProductDetailsDTO;
-import com.cgnial.salesreports.domain.DTO.ProductSummaryDTO;
+import com.cgnial.salesreports.domain.DTO.products.ProductDetailsDTO;
+import com.cgnial.salesreports.domain.DTO.products.ProductSummaryDTO;
 import com.cgnial.salesreports.domain.Product;
-import com.cgnial.salesreports.domain.parameter.ProductDetailsParameter;
+import com.cgnial.salesreports.domain.parameter.products.ProductDetailsParameter;
 import com.cgnial.salesreports.repositories.ProductRepository;
-import com.cgnial.salesreports.service.ExcelReaderService;
-import com.cgnial.salesreports.service.ProductService;
+import com.cgnial.salesreports.service.loading.ExcelReaderService;
+import com.cgnial.salesreports.service.products.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

@@ -1,11 +1,11 @@
 package com.cgnial.salesreports;
 
 import com.cgnial.salesreports.domain.DTO.cases.CaseOrderDTO;
-import com.cgnial.salesreports.domain.DTO.CasesByDistributorByYearDTO;
-import com.cgnial.salesreports.domain.DTO.CasesByYearDTO;
+import com.cgnial.salesreports.domain.DTO.cases.CasesByDistributorByYearDTO;
+import com.cgnial.salesreports.domain.DTO.cases.CasesByYearDTO;
 import com.cgnial.salesreports.domain.PurchaseOrderProduct;
 import com.cgnial.salesreports.repositories.PurchaseOrderProductRepository;
-import com.cgnial.salesreports.service.DistributorCasesService;
+import com.cgnial.salesreports.service.toDistributors.DistributorCasesService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

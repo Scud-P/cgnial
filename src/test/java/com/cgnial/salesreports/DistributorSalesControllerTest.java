@@ -1,9 +1,9 @@
 package com.cgnial.salesreports;
 
 import com.cgnial.salesreports.controllers.toDistributors.DistributorSalesController;
-import com.cgnial.salesreports.domain.DTO.SalesByDistributorByYearDTO;
-import com.cgnial.salesreports.domain.DTO.SalesByYearDTO;
-import com.cgnial.salesreports.service.DistributorSalesService;
+import com.cgnial.salesreports.domain.DTO.toDistributors.SalesByDistributorByYearDTO;
+import com.cgnial.salesreports.domain.DTO.toDistributors.SalesByYearDTO;
+import com.cgnial.salesreports.service.toDistributors.SalesToDistributorsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class DistributorSalesControllerTest {
 
     @Mock
-    private DistributorSalesService distributorSalesService;
+    private SalesToDistributorsService distributorSalesService;
 
     @Autowired
     private MockMvc mockMvc;

@@ -1,8 +1,8 @@
 package com.cgnial.salesreports.controllers.toDistributors;
 
-import com.cgnial.salesreports.domain.DTO.SalesByDistributorByYearDTO;
-import com.cgnial.salesreports.domain.DTO.SalesPerDistributorDTO;
-import com.cgnial.salesreports.service.SalesToDistributorsService;
+import com.cgnial.salesreports.domain.DTO.toDistributors.SalesByDistributorByYearDTO;
+import com.cgnial.salesreports.domain.DTO.toDistributors.SalesPerDistributorDTO;
+import com.cgnial.salesreports.service.toDistributors.SalesToDistributorsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
