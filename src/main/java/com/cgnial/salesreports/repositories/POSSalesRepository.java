@@ -26,5 +26,4 @@ public interface POSSalesRepository extends JpaRepository<POSSale, Long> {
     @Query("SELECT p FROM POSSale p WHERE LOWER(p.distributor) = LOWER(:distributor) AND p.quarter <= (:quarter)")
     List<POSSale> findByDistributorInferiorOrEqualToQuarter(@Param("distributor") String distributor, @Param("quarter") int quarter);
 
-
 }
