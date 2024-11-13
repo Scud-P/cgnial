@@ -1,6 +1,7 @@
 package com.cgnial.salesreports.controllers.distributors;
 
 import com.cgnial.salesreports.domain.DTO.distributorSales.YearlyDistributorSalesDTO;
+import com.cgnial.salesreports.domain.DTO.distributorSalesByGroup.YearlySalesByAccountDTO;
 import com.cgnial.salesreports.domain.DTO.distributorSalesBySKU.YearlySalesBySKUDTO;
 import com.cgnial.salesreports.service.distributorSales.DistributorsSalesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,31 @@ public class DistributorsSalesController {
         List<YearlySalesBySKUDTO> allPuresourceSales = distributorsSalesService.getDistributorQuarterlySalesBySKU("Puresource");
         return ResponseEntity.ok(allPuresourceSales);
     }
+
+    @GetMapping("/satau/byAccountGroup")
+    public ResponseEntity<List<YearlySalesByAccountDTO>> getSatauQuarterlySalesByGroup() {
+        List<YearlySalesByAccountDTO> allSatauSales = distributorsSalesService.getBestGroupSalesByYear("Satau");
+        return ResponseEntity.ok(allSatauSales);
+    }
+
+    @GetMapping("/unfi/byAccountGroup")
+    public ResponseEntity<List<YearlySalesByAccountDTO>> getUnfiQuarterlySalesByGroup() {
+        List<YearlySalesByAccountDTO> allUnfiSales =  distributorsSalesService.getBestGroupSalesByYear("Unfi");
+        return ResponseEntity.ok(allUnfiSales);
+    }
+
+    @GetMapping("/satau/byAccount")
+    public ResponseEntity<List<YearlySalesByAccountDTO>> getSatauQuarterlySalesByAccount() {
+        List<YearlySalesByAccountDTO> allSatauSales = distributorsSalesService.getBestGroupSalesByYear("Satau");
+        return ResponseEntity.ok(allSatauSales);
+    }
+
+    @GetMapping("/unfi/byAccount")
+    public ResponseEntity<List<YearlySalesByAccountDTO>> getUnfiQuarterlySalesByAccount() {
+        List<YearlySalesByAccountDTO> allUnfiSales =  distributorsSalesService.getBestGroupSalesByYear("Unfi");
+        return ResponseEntity.ok(allUnfiSales);
+    }
+
 
 
     //TODO 10 meilleurs comptes par an par quarter

@@ -1,9 +1,11 @@
 package com.cgnial.salesreports.service.distributorSales;
 
-import com.cgnial.salesreports.domain.DTO.distributorSales.AccountPOSSaleDTO;
 import com.cgnial.salesreports.domain.DTO.distributorSales.POSSaleDTO;
 import com.cgnial.salesreports.domain.DTO.distributorSales.QuarterlyDistributorSalesDTO;
 import com.cgnial.salesreports.domain.DTO.distributorSales.YearlyDistributorSalesDTO;
+import com.cgnial.salesreports.domain.DTO.distributorSalesByGroup.GroupPOSSaleDTO;
+import com.cgnial.salesreports.domain.DTO.distributorSalesByGroup.QuarterlySalesByAccountDTO;
+import com.cgnial.salesreports.domain.DTO.distributorSalesByGroup.YearlySalesByAccountDTO;
 import com.cgnial.salesreports.domain.DTO.distributorSalesBySKU.QuarterlySalesBySKUDTO;
 import com.cgnial.salesreports.domain.DTO.distributorSalesBySKU.SKUPOSSaleDTO;
 import com.cgnial.salesreports.domain.DTO.distributorSalesBySKU.YearlySalesBySKUDTO;
@@ -15,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class DistributorsSalesService {
@@ -26,13 +29,6 @@ public class DistributorsSalesService {
         return posSalesRepository.findByDistributor(distributor)
                 .stream()
                 .map(POSSaleDTO::new)
-                .toList();
-    }
-
-    public List<AccountPOSSaleDTO> getAllSatauSalesWithAccount(int quarter, String distributor) {
-        return posSalesRepository.findByDistributorInferiorOrEqualToQuarter(distributor, quarter)
-                .stream()
-                .map(AccountPOSSaleDTO::new)
                 .toList();
     }
 
@@ -120,6 +116,7 @@ public class DistributorsSalesService {
                 .toList();
     }
 
+    // Case 0 because we initialize empty DTOs (without ItemNumber)
     public void incrementQuantityForItemNumber(QuarterlySalesBySKUDTO dtoToIncrement, int itemNumber, double amount) {
         switch (itemNumber) {
             case 100 -> dtoToIncrement.setOneHundredSales(dtoToIncrement.getOneHundredSales() + amount);
@@ -151,6 +148,93 @@ public class DistributorsSalesService {
         }
     }
 
+    public List<GroupPOSSaleDTO> getTenBestAccounts(String distributor) {
 
+        List<GroupPOSSaleDTO> salesByAccount = posSalesRepository.findByDistributor(distributor).stream()
+                .map(GroupPOSSaleDTO::new)
+                .toList();
 
+        Map<String, Double> totalSalesByAccount = salesByAccount.stream()
+                .collect(Collectors.groupingBy(GroupPOSSaleDTO::getAccount,
+                        Collectors.summingDouble(GroupPOSSaleDTO::getAmount)));
+
+        List<GroupPOSSaleDTO> aggregatedSales = totalSalesByAccount.entrySet().stream()
+                .map(entry -> new GroupPOSSaleDTO(entry.getKey(), entry.getValue(), 0, 0))
+                .sorted((a, b) -> Double.compare(b.getAmount(), a.getAmount()))
+                .limit(10)
+                .toList();
+
+        return aggregatedSales;
+    }
+
+    public List<YearlySalesByAccountDTO> getBestGroupSalesByYear(String distributor) {
+
+        List<GroupPOSSaleDTO> salesByAccount = posSalesRepository.findByDistributor(distributor).stream()
+                .map(GroupPOSSaleDTO::new)
+                .toList();
+
+        Map<String, Double> totalSalesByAccount = salesByAccount.stream()
+                .filter(sale -> sale.getAccount() != null) // Filter out null accounts to prevent NullPointerException
+                .collect(Collectors.groupingBy(
+                        GroupPOSSaleDTO::getAccount,
+                        Collectors.summingDouble(GroupPOSSaleDTO::getAmount)
+                ));
+
+        List<String> top10Accounts = totalSalesByAccount.entrySet().stream()
+                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
+                .limit(10)
+                .map(Map.Entry::getKey)
+                .toList();
+
+        List<GroupPOSSaleDTO> topSalesByAccount = salesByAccount.stream()
+                .filter(sale -> top10Accounts.contains(sale.getAccount()))
+                .toList();
+
+        Map<Integer, YearlySalesByAccountDTO> salesByAccountMap = new HashMap<>();
+
+        for(GroupPOSSaleDTO saleDTO : topSalesByAccount) {
+            int year = saleDTO.getYear();
+            int quarter = saleDTO.getQuarter();
+            double amount = saleDTO.getAmount();
+            String account = saleDTO.getAccount();
+
+            YearlySalesByAccountDTO yearlySalesByAccount = salesByAccountMap.get(year);
+            if(yearlySalesByAccount == null) {
+                yearlySalesByAccount = new YearlySalesByAccountDTO(year, new ArrayList<>());
+                salesByAccountMap.put(year, yearlySalesByAccount);
+            }
+
+            QuarterlySalesByAccountDTO quarterlySalesByAccountDTO = yearlySalesByAccount.getQuarterlySalesByAccount().stream()
+                    .filter(q -> q.getQuarter() == quarter)
+                    .findFirst()
+                    .orElse(null);
+
+            if(quarterlySalesByAccountDTO == null) {
+                quarterlySalesByAccountDTO = new QuarterlySalesByAccountDTO(quarter, new ArrayList<>());
+                yearlySalesByAccount.getQuarterlySalesByAccount().add(quarterlySalesByAccountDTO);
+            }
+            incrementQuantityForAccount(quarterlySalesByAccountDTO, account, amount);
+        }
+        return new ArrayList<>(salesByAccountMap.values());
+    }
+
+    private void incrementQuantityForAccount(QuarterlySalesByAccountDTO quarterlySalesByAccountDTO, String account, double amount) {
+        // Ensure `account` is not null
+        if (account == null) {
+            return;
+        }
+        // Find the existing account sales for this account if it exists
+        GroupPOSSaleDTO existingAccountSales = quarterlySalesByAccountDTO.getSalesByAccount().stream()
+                .filter(s -> account.equals(s.getAccount())) // Add null-safe equals check
+                .findFirst()
+                .orElse(null);
+
+        if (existingAccountSales != null) {
+            // Update the amount for the existing account by adding the new sale amount
+            existingAccountSales.setAmount(existingAccountSales.getAmount() + amount);
+        } else {
+            // Add a new entry if the account doesn't exist in the list
+            quarterlySalesByAccountDTO.getSalesByAccount().add(new GroupPOSSaleDTO(account, amount, quarterlySalesByAccountDTO.getQuarter(), quarterlySalesByAccountDTO.getQuarter()));
+        }
+    }
 }

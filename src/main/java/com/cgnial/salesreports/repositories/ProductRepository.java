@@ -30,6 +30,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     // Table is products because it references the actual MySQL table, and not the entity, because of nativeQuery = true
     @Query(value = "SELECT p.coutu_code FROM Products p WHERE p.old_satau_code = :oldSatauCode LIMIT 1", nativeQuery = true)
     Integer findCoutuCodeByOldSatauCode(@Param("oldSatauCode") String oldSatauCode);
+
+    @Query("SELECT p.coutuCode FROM Product p WHERE p.oldUnfiCode = :oldUnfiCode")
+    Integer findCoutuCodeByOldUnfiCode(@Param("oldUnfiCode") String oldUnfiCode);
 }
 
 

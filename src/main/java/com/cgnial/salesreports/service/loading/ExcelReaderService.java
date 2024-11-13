@@ -97,6 +97,9 @@ public class ExcelReaderService {
                 product.setCaseSize(row.getCell(13).getStringCellValue());
                 logger.info("ExcelReader found Case Size: {}", product.getCaseSize());
             }
+            if (row.getCell(14) != null) {
+                product.setOldUnfiCode(row.getCell(14).getStringCellValue());
+            }
 
             products.add(product);
             logger.info("Product added to list: {}", product);
@@ -267,7 +270,6 @@ public class ExcelReaderService {
             }
             sales.add(po);
         }
-
         workbook.close();
         file.close();
 

@@ -34,6 +34,16 @@ public class ItemNumberMatchingService {
     public Integer determineProductCodeFromUnfiItemNumber(String unfiItemNumber) {
         Integer coutuCode = productRepository.findCoutuCodeByUnfiCode(unfiItemNumber);
         if (coutuCode == null ) {
+
+            return 0;
+        }
+        return  coutuCode;
+    }
+
+    public Integer determineProductCodeFromOldUnfiItemNumber(String unfiItemNumber) {
+        Integer coutuCode = productRepository.findCoutuCodeByOldUnfiCode(unfiItemNumber);
+        if (coutuCode == null ) {
+            logger.info("Could not find Coutu code for UNFI item number: {}", unfiItemNumber);
             return 0;
         }
         return  coutuCode;

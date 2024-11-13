@@ -58,6 +58,12 @@ public class POSSalesLoaderService {
                 .toList();
 
         logger.info("Missing Codes: {} ", missingCodes);
+
+        for(POSSale sale : salesToPersist) {
+            if(sale.getItemNumber() == 0) {
+                logger.info("{}", sale);
+            }
+        }
         posSalesRepository.saveAll(salesToPersist);
     }
 
@@ -94,6 +100,13 @@ public class POSSalesLoaderService {
                 })
                 .toList();
         logger.info("Missing Satau Codes: {} ", missingCodes);
+
+        for(POSSale sale : salesToPersist) {
+            if(sale.getItemNumber() == 0) {
+                logger.info("{}", sale);
+            }
+        }
+
         // Persist all sales to the repository
         posSalesRepository.saveAll(salesToPersist);
     }
@@ -110,10 +123,16 @@ public class POSSalesLoaderService {
 
     @Transactional
     public void loadAllUnfiSales(List<UnfiPOSParameter> sales) {
+
+        int missingSales = 0;
+
         List<POSSale> salesToPersist = sales.stream()
                 .map(parameter -> {
                     // Determine the product code based on the unfiItemNumber
                     int productCode = itemNumberMatchingService.determineProductCodeFromUnfiItemNumber(parameter.getUnfiItemNumber());
+                    if(productCode == 0) {
+                        productCode = itemNumberMatchingService.determineProductCodeFromOldUnfiItemNumber(parameter.getUnfiItemNumber());
+                    }
                     int month = datesUtil.convertMonthToIntValue(parameter.getMonth());
                     int quarter = datesUtil.determineQuarter(month);
                     POSSale sale = new POSSale(parameter);
@@ -123,6 +142,14 @@ public class POSSalesLoaderService {
                     return sale;
                 })
                 .toList();
+
+        for(POSSale sale : salesToPersist) {
+            if(sale.getItemNumber() == 0) {
+                missingSales++;
+                logger.info("{}", sale);
+            }
+        }
+        logger.info("Missing sales : {}", missingSales);
         // Persist all sales to the repository
         posSalesRepository.saveAll(salesToPersist);
     }

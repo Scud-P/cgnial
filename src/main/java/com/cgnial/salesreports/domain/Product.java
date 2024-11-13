@@ -44,6 +44,8 @@ public class Product {
     private String puresourceCode;
     @Column(name="old_puresource_code")
     private String oldPuresourceCode;
+    @Column(name="old_unfi_code")
+    private String oldUnfiCode;
 
     public Product(ProductDetailsParameter productDetailsParameter) {
         this.id = productDetailsParameter.getId();
