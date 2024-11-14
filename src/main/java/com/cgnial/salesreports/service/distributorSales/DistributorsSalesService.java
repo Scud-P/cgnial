@@ -3,6 +3,7 @@ package com.cgnial.salesreports.service.distributorSales;
 import com.cgnial.salesreports.domain.DTO.distributorSales.POSSaleDTO;
 import com.cgnial.salesreports.domain.DTO.distributorSales.QuarterlyDistributorSalesDTO;
 import com.cgnial.salesreports.domain.DTO.distributorSales.YearlyDistributorSalesDTO;
+import com.cgnial.salesreports.domain.DTO.distributorSalesByAccount.AccountPOSSaleDTO;
 import com.cgnial.salesreports.domain.DTO.distributorSalesByGroup.*;
 import com.cgnial.salesreports.domain.DTO.distributorSalesBySKU.*;
 import com.cgnial.salesreports.repositories.POSSalesRepository;
@@ -209,12 +210,15 @@ public class DistributorsSalesService {
                 .toList();
 
         // Step 2: List of accounts to exclude if distributor is UNFI
-        List<String> excludedAccounts = distributor.equalsIgnoreCase("unfi") ? excludedUnfiAccounts() : List.of();
+        List<String> excludedUNFIAccounts = distributor.equalsIgnoreCase("unfi") ? excludedUnfiAccounts() : List.of();
+        List<String> excludedSatauGroups = distributor.equalsIgnoreCase("satau") ? satauExcludedGroups() : List.of();
+
 
         // Step 3: Filter out the excluded accounts early in the stream pipeline
         salesByAccount = salesByAccount.stream()
                 .filter(sale -> sale.getAccount() != null) // Filter out null accounts
-                .filter(sale -> !excludedAccounts.contains(sale.getAccount())) // Exclude unwanted accounts
+                .filter(sale -> !excludedUNFIAccounts.contains(sale.getAccount()))
+                .filter(sale -> !excludedSatauGroups.contains(sale.getAccount()))// Exclude unwanted accounts
                 .toList();
 
         // Step 4: Calculate total sales by account (only considering non-excluded accounts)
@@ -271,10 +275,120 @@ public class DistributorsSalesService {
         return new ArrayList<>(salesByAccountMap.values());
     }
 
+    public List<YearlySalesByAccountDTO> getBestAccountSalesByYear(String distributor) {
+
+        // Step 1: Fetch sales data from repository and map to DTOs
+        List<AccountPOSSaleDTO> salesByAccount = posSalesRepository.findByDistributor(distributor).stream()
+                .map(AccountPOSSaleDTO::new)
+                .toList();
+
+        // Step 2: List of accounts to exclude if distributor is UNFI
+        List<String> excludedUNFIAccounts = distributor.equalsIgnoreCase("unfi") ? excludedUnfiAccounts() : List.of();
+        List<String> excludedSatauAccounts = distributor.equalsIgnoreCase("satau") ? satauExcludedAccounts() : List.of();
+
+
+        // Step 3: Filter out the excluded accounts early in the stream pipeline
+        salesByAccount = salesByAccount.stream()
+                .filter(sale -> sale.getAccount() != null) // Filter out null accounts
+                .filter(sale -> !excludedUNFIAccounts.contains(sale.getAccount()))
+                .filter(sale -> !excludedSatauAccounts.contains(sale.getAccount()))// Exclude unwanted accounts
+                .toList();
+
+        // Step 4: Calculate total sales by account (only considering non-excluded accounts)
+        Map<String, Double> totalSalesByAccount = salesByAccount.stream()
+                .collect(Collectors.groupingBy(
+                        AccountPOSSaleDTO::getAccount,
+                        Collectors.summingDouble(AccountPOSSaleDTO::getAmount)
+                ));
+
+        // Step 5: Get top 10 accounts by total sales (already excluding unwanted accounts)
+        List<String> top10Accounts = totalSalesByAccount.entrySet().stream()
+                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue())) // Sort by amount
+                .limit(10)
+                .map(Map.Entry::getKey)
+                .toList();
+
+        // Step 6: Filter sales data to include only the top 10 accounts
+        List<AccountPOSSaleDTO> topSalesByAccount = salesByAccount.stream()
+                .filter(sale -> top10Accounts.contains(sale.getAccount())) // Only top 10 accounts
+                .toList();
+
+        // Step 7: Group sales data by year and quarter
+        Map<Integer, YearlySalesByAccountDTO> salesByAccountMap = new HashMap<>();
+
+        for (AccountPOSSaleDTO saleDTO : topSalesByAccount) {
+            int year = saleDTO.getYear();
+            int quarter = saleDTO.getQuarter();
+            double amount = saleDTO.getAmount();
+            String account = saleDTO.getAccount();
+
+            // Create or retrieve yearly data object
+            YearlySalesByAccountDTO yearlySalesByAccount = salesByAccountMap.get(year);
+            if (yearlySalesByAccount == null) {
+                yearlySalesByAccount = new YearlySalesByAccountDTO(year, new ArrayList<>());
+                salesByAccountMap.put(year, yearlySalesByAccount);
+            }
+
+            // Create or retrieve quarterly data object
+            QuarterlySalesByAccountDTO quarterlySalesByAccountDTO = yearlySalesByAccount.getQuarterlySalesByAccount().stream()
+                    .filter(q -> q.getQuarter() == quarter)
+                    .findFirst()
+                    .orElse(null);
+
+            if (quarterlySalesByAccountDTO == null) {
+                quarterlySalesByAccountDTO = new QuarterlySalesByAccountDTO(quarter, new ArrayList<>());
+                yearlySalesByAccount.getQuarterlySalesByAccount().add(quarterlySalesByAccountDTO);
+            }
+
+            // Increment quantity for account in the quarterly sales data
+            incrementQuantityForAccount(quarterlySalesByAccountDTO, account, amount);
+        }
+
+        // Step 8: Return the final list, after applying the exclusions
+        return new ArrayList<>(salesByAccountMap.values());
+    }
+
     // Method that returns the list of accounts to exclude when distributor is "UNFI"
     public List<String> excludedUnfiAccounts() {
         return List.of(
                 "METRO QUEBEC", "SOBEYS QUEBEC", "FIELD SALES INDIE", "CUSTOMER EXP INDIE"
+        );
+    }
+
+    // Method that returns the list of accounts to exclude when distributor is "UNFI"
+    public List<String> satauExcludedGroups() {
+        return List.of(
+                "MOIS004 Client",
+                "SUPE012 Client"
+        );
+    }
+
+    public List<String> satauExcludedAccounts() {
+        return List.of(
+                "LA BOITE A GRAINS (GATINEAU)",
+                "LA BOITE A GRAINS (PLATEAU)",
+                "S. BOURASSA(MT-TREMBL.LTEE",
+                "TAU ALIMENTS NATURELS (Laval)",
+                "LA BOITE A GRAINS (HULL)",
+                "TAU ALIM.NAT(POINTE-CLAIRE)",
+                "9228-6632 QUEBEC INC. (POINTE-CLAIRE)",
+                "9152-6491 QUEBEC INC. (LANGELIER)",
+                "S.BOURASSA ( St-Janvier) Ltee",
+                "TAU ALIMENTS NATURELS LANGE",
+                "S.BOURASSA(STE-AGATHE)LTEE",
+                "Tau Alim. Naturels (Brossard)",
+                "TAU BLAINVILLE / 9365-0075 QUEBEC INC.",
+                "EPICERIES P.A. NATURE INC.",
+                "Groupe ADONIS Inc(marche Adonis-dix 30)",
+                "Les Marches d'Aliments Naturels TAU INC.(BROSSARD)",
+                "S.E.C.PASQUIER",
+                "9228-6632 QUEBEC INC.",
+                "GROUPE ADONIS (division Gatineau)",
+                "ADONIS OTTAWA",
+                "9365-0075 QUEBEC INC. (BLAINVILLE)",
+                "BIO SATTVA",
+                "9228-6632 QUEBEC INC.",
+                "LA BOITE A GRAINS (AYLMER)"
         );
     }
 
@@ -297,5 +411,4 @@ public class DistributorsSalesService {
             quarterlySalesByAccountDTO.getSalesByAccount().add(new GroupPOSSaleDTO(account, amount, quarterlySalesByAccountDTO.getQuarter(), quarterlySalesByAccountDTO.getQuarter()));
         }
     }
-
 }

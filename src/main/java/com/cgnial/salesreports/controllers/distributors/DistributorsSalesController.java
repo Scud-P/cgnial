@@ -72,7 +72,7 @@ public class DistributorsSalesController {
 
     @GetMapping("/satau/byAccount")
     public ResponseEntity<List<YearlySalesByAccountDTO>> getSatauQuarterlySalesByAccount() {
-        List<YearlySalesByAccountDTO> allSatauSales = distributorsSalesService.getBestGroupSalesByYear("Satau");
+        List<YearlySalesByAccountDTO> allSatauSales = distributorsSalesService.getBestAccountSalesByYear("Satau");
         return ResponseEntity.ok(allSatauSales);
     }
 
