@@ -1,4 +1,4 @@
-package com.cgnial.salesreports.domain.DTO.distributorSalesBySKU;
+package com.cgnial.salesreports.domain.DTO.distributorSalesByGroup;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

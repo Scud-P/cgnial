@@ -3,12 +3,8 @@ package com.cgnial.salesreports.service.distributorSales;
 import com.cgnial.salesreports.domain.DTO.distributorSales.POSSaleDTO;
 import com.cgnial.salesreports.domain.DTO.distributorSales.QuarterlyDistributorSalesDTO;
 import com.cgnial.salesreports.domain.DTO.distributorSales.YearlyDistributorSalesDTO;
-import com.cgnial.salesreports.domain.DTO.distributorSalesByGroup.GroupPOSSaleDTO;
-import com.cgnial.salesreports.domain.DTO.distributorSalesByGroup.QuarterlySalesByAccountDTO;
-import com.cgnial.salesreports.domain.DTO.distributorSalesByGroup.YearlySalesByAccountDTO;
-import com.cgnial.salesreports.domain.DTO.distributorSalesBySKU.QuarterlySalesBySKUDTO;
-import com.cgnial.salesreports.domain.DTO.distributorSalesBySKU.SKUPOSSaleDTO;
-import com.cgnial.salesreports.domain.DTO.distributorSalesBySKU.YearlySalesBySKUDTO;
+import com.cgnial.salesreports.domain.DTO.distributorSalesByGroup.*;
+import com.cgnial.salesreports.domain.DTO.distributorSalesBySKU.*;
 import com.cgnial.salesreports.repositories.POSSalesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -167,41 +163,39 @@ public class DistributorsSalesService {
         return aggregatedSales;
     }
 
-    public List<YearlySalesByAccountDTO> getSalesForMassGroup(String distributor, String group) {
+    public List<GroupYearlyDTO> getSalesForMassGroup(String distributor, String group) {
 
-        List<GroupPOSSaleDTO> metroSales = posSalesRepository.findSalesByDistributorAndGroup(distributor, group)
+        List<GroupSaleDTO> metroSales = posSalesRepository.findSalesByDistributorAndGroup(distributor, group)
                 .stream()
-                .map(GroupPOSSaleDTO::new)
+                .map(GroupSaleDTO::new)
                 .toList();
 
-        Map<Integer, YearlySalesByAccountDTO> salesByAccountMap = new HashMap<>();
+        Map<Integer, GroupYearlyDTO> salesByAccountMap = new HashMap<>();
 
-        for (GroupPOSSaleDTO saleDTO : metroSales) {
+        for (GroupSaleDTO saleDTO : metroSales) {
             int year = saleDTO.getYear();
             int quarter = saleDTO.getQuarter();
             double amount = saleDTO.getAmount();
-            String account = saleDTO.getAccount();
 
             // Create or retrieve yearly data object
-            YearlySalesByAccountDTO yearlySalesByAccount = salesByAccountMap.get(year);
-            if (yearlySalesByAccount == null) {
-                yearlySalesByAccount = new YearlySalesByAccountDTO(year, new ArrayList<>());
-                salesByAccountMap.put(year, yearlySalesByAccount);
+            GroupYearlyDTO yearlySales = salesByAccountMap.get(year);
+            if (yearlySales == null) {
+                yearlySales = new GroupYearlyDTO(year, new ArrayList<>());
+                salesByAccountMap.put(year, yearlySales);
             }
 
-            QuarterlySalesByAccountDTO quarterlySalesByAccountDTO = yearlySalesByAccount.getQuarterlySalesByAccount().stream()
+            GroupQuarterlyDTO quarterlySales = yearlySales.getSalesByQuarter().stream()
                     .filter(q -> q.getQuarter() == quarter)
                     .findFirst()
                     .orElse(null);
 
-            if (quarterlySalesByAccountDTO == null) {
-                quarterlySalesByAccountDTO = new QuarterlySalesByAccountDTO(quarter, new ArrayList<>());
-                yearlySalesByAccount.getQuarterlySalesByAccount().add(quarterlySalesByAccountDTO);
+            if (quarterlySales == null) {
+                quarterlySales = new GroupQuarterlyDTO(quarter, 0.0);
+                yearlySales.getSalesByQuarter().add(quarterlySales);
+            } else {
+                quarterlySales.setAmount(quarterlySales.getAmount() + amount);
             }
-
-            incrementQuantityForAccount(quarterlySalesByAccountDTO, account, amount);
         }
-
         // Step 8: Return the final list, after applying the exclusions
         return new ArrayList<>(salesByAccountMap.values());
     }
@@ -303,6 +297,5 @@ public class DistributorsSalesService {
             quarterlySalesByAccountDTO.getSalesByAccount().add(new GroupPOSSaleDTO(account, amount, quarterlySalesByAccountDTO.getQuarter(), quarterlySalesByAccountDTO.getQuarter()));
         }
     }
-
 
 }

@@ -2,6 +2,7 @@ package com.cgnial.salesreports.controllers.distributors;
 
 import com.cgnial.salesreports.domain.DTO.distributorSales.YearlyDistributorSalesDTO;
 import com.cgnial.salesreports.domain.DTO.distributorSalesByGroup.YearlySalesByAccountDTO;
+import com.cgnial.salesreports.domain.DTO.distributorSalesByGroup.GroupYearlyDTO;
 import com.cgnial.salesreports.domain.DTO.distributorSalesBySKU.YearlySalesBySKUDTO;
 import com.cgnial.salesreports.service.distributorSales.DistributorsSalesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,18 +83,16 @@ public class DistributorsSalesController {
     }
 
     @GetMapping("/unfi/metro")
-    public ResponseEntity<List<YearlySalesByAccountDTO>> getMetroQuarterlySales() {
-        List<YearlySalesByAccountDTO> allMetroSales =  distributorsSalesService.getSalesForMassGroup("unfi", "metro quebec");
+    public ResponseEntity<List<GroupYearlyDTO>> getMetroQuarterlySales() {
+        List<GroupYearlyDTO> allMetroSales =  distributorsSalesService.getSalesForMassGroup("unfi", "metro quebec");
         return ResponseEntity.ok(allMetroSales);
     }
 
     @GetMapping("/unfi/sobeys")
-    public ResponseEntity<List<YearlySalesByAccountDTO>> getSobeysQuarterlySales() {
-        List<YearlySalesByAccountDTO> allSobeysSales =  distributorsSalesService.getSalesForMassGroup("unfi", "sobeys quebec");
+    public ResponseEntity<List<GroupYearlyDTO>> getSobeysQuarterlySales() {
+        List<GroupYearlyDTO> allSobeysSales =  distributorsSalesService.getSalesForMassGroup("unfi", "sobeys quebec");
         return ResponseEntity.ok(allSobeysSales);
     }
-
-
 
     //TODO 10 meilleurs comptes par an par quarter
 }
