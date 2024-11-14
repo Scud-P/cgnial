@@ -167,39 +167,24 @@ public class DistributorsSalesService {
         return aggregatedSales;
     }
 
-    public List<YearlySalesByAccountDTO> getBestGroupSalesByYear(String distributor) {
+    public List<YearlySalesByAccountDTO> getSalesForMassGroup(String distributor, String group) {
 
-        List<GroupPOSSaleDTO> salesByAccount = posSalesRepository.findByDistributor(distributor).stream()
+        List<GroupPOSSaleDTO> metroSales = posSalesRepository.findSalesByDistributorAndGroup(distributor, group)
+                .stream()
                 .map(GroupPOSSaleDTO::new)
-                .toList();
-
-        Map<String, Double> totalSalesByAccount = salesByAccount.stream()
-                .filter(sale -> sale.getAccount() != null) // Filter out null accounts to prevent NullPointerException
-                .collect(Collectors.groupingBy(
-                        GroupPOSSaleDTO::getAccount,
-                        Collectors.summingDouble(GroupPOSSaleDTO::getAmount)
-                ));
-
-        List<String> top10Accounts = totalSalesByAccount.entrySet().stream()
-                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
-                .limit(10)
-                .map(Map.Entry::getKey)
-                .toList();
-
-        List<GroupPOSSaleDTO> topSalesByAccount = salesByAccount.stream()
-                .filter(sale -> top10Accounts.contains(sale.getAccount()))
                 .toList();
 
         Map<Integer, YearlySalesByAccountDTO> salesByAccountMap = new HashMap<>();
 
-        for(GroupPOSSaleDTO saleDTO : topSalesByAccount) {
+        for (GroupPOSSaleDTO saleDTO : metroSales) {
             int year = saleDTO.getYear();
             int quarter = saleDTO.getQuarter();
             double amount = saleDTO.getAmount();
             String account = saleDTO.getAccount();
 
+            // Create or retrieve yearly data object
             YearlySalesByAccountDTO yearlySalesByAccount = salesByAccountMap.get(year);
-            if(yearlySalesByAccount == null) {
+            if (yearlySalesByAccount == null) {
                 yearlySalesByAccount = new YearlySalesByAccountDTO(year, new ArrayList<>());
                 salesByAccountMap.put(year, yearlySalesByAccount);
             }
@@ -209,13 +194,94 @@ public class DistributorsSalesService {
                     .findFirst()
                     .orElse(null);
 
-            if(quarterlySalesByAccountDTO == null) {
+            if (quarterlySalesByAccountDTO == null) {
                 quarterlySalesByAccountDTO = new QuarterlySalesByAccountDTO(quarter, new ArrayList<>());
                 yearlySalesByAccount.getQuarterlySalesByAccount().add(quarterlySalesByAccountDTO);
             }
+
             incrementQuantityForAccount(quarterlySalesByAccountDTO, account, amount);
         }
+
+        // Step 8: Return the final list, after applying the exclusions
         return new ArrayList<>(salesByAccountMap.values());
+    }
+
+
+    public List<YearlySalesByAccountDTO> getBestGroupSalesByYear(String distributor) {
+
+        // Step 1: Fetch sales data from repository and map to DTOs
+        List<GroupPOSSaleDTO> salesByAccount = posSalesRepository.findByDistributor(distributor).stream()
+                .map(GroupPOSSaleDTO::new)
+                .toList();
+
+        // Step 2: List of accounts to exclude if distributor is UNFI
+        List<String> excludedAccounts = distributor.equalsIgnoreCase("unfi") ? excludedUnfiAccounts() : List.of();
+
+        // Step 3: Filter out the excluded accounts early in the stream pipeline
+        salesByAccount = salesByAccount.stream()
+                .filter(sale -> sale.getAccount() != null) // Filter out null accounts
+                .filter(sale -> !excludedAccounts.contains(sale.getAccount())) // Exclude unwanted accounts
+                .toList();
+
+        // Step 4: Calculate total sales by account (only considering non-excluded accounts)
+        Map<String, Double> totalSalesByAccount = salesByAccount.stream()
+                .collect(Collectors.groupingBy(
+                        GroupPOSSaleDTO::getAccount,
+                        Collectors.summingDouble(GroupPOSSaleDTO::getAmount)
+                ));
+
+        // Step 5: Get top 10 accounts by total sales (already excluding unwanted accounts)
+        List<String> top10Accounts = totalSalesByAccount.entrySet().stream()
+                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue())) // Sort by amount
+                .limit(10)
+                .map(Map.Entry::getKey)
+                .toList();
+
+        // Step 6: Filter sales data to include only the top 10 accounts
+        List<GroupPOSSaleDTO> topSalesByAccount = salesByAccount.stream()
+                .filter(sale -> top10Accounts.contains(sale.getAccount())) // Only top 10 accounts
+                .toList();
+
+        // Step 7: Group sales data by year and quarter
+        Map<Integer, YearlySalesByAccountDTO> salesByAccountMap = new HashMap<>();
+
+        for (GroupPOSSaleDTO saleDTO : topSalesByAccount) {
+            int year = saleDTO.getYear();
+            int quarter = saleDTO.getQuarter();
+            double amount = saleDTO.getAmount();
+            String account = saleDTO.getAccount();
+
+            // Create or retrieve yearly data object
+            YearlySalesByAccountDTO yearlySalesByAccount = salesByAccountMap.get(year);
+            if (yearlySalesByAccount == null) {
+                yearlySalesByAccount = new YearlySalesByAccountDTO(year, new ArrayList<>());
+                salesByAccountMap.put(year, yearlySalesByAccount);
+            }
+
+            // Create or retrieve quarterly data object
+            QuarterlySalesByAccountDTO quarterlySalesByAccountDTO = yearlySalesByAccount.getQuarterlySalesByAccount().stream()
+                    .filter(q -> q.getQuarter() == quarter)
+                    .findFirst()
+                    .orElse(null);
+
+            if (quarterlySalesByAccountDTO == null) {
+                quarterlySalesByAccountDTO = new QuarterlySalesByAccountDTO(quarter, new ArrayList<>());
+                yearlySalesByAccount.getQuarterlySalesByAccount().add(quarterlySalesByAccountDTO);
+            }
+
+            // Increment quantity for account in the quarterly sales data
+            incrementQuantityForAccount(quarterlySalesByAccountDTO, account, amount);
+        }
+
+        // Step 8: Return the final list, after applying the exclusions
+        return new ArrayList<>(salesByAccountMap.values());
+    }
+
+    // Method that returns the list of accounts to exclude when distributor is "UNFI"
+    public List<String> excludedUnfiAccounts() {
+        return List.of(
+                "METRO QUEBEC", "SOBEYS QUEBEC", "FIELD SALES INDIE", "CUSTOMER EXP INDIE"
+        );
     }
 
     private void incrementQuantityForAccount(QuarterlySalesByAccountDTO quarterlySalesByAccountDTO, String account, double amount) {
@@ -237,4 +303,6 @@ public class DistributorsSalesService {
             quarterlySalesByAccountDTO.getSalesByAccount().add(new GroupPOSSaleDTO(account, amount, quarterlySalesByAccountDTO.getQuarter(), quarterlySalesByAccountDTO.getQuarter()));
         }
     }
+
+
 }

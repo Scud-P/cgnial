@@ -1,5 +1,6 @@
 package com.cgnial.salesreports.repositories;
 
+import com.cgnial.salesreports.domain.DTO.distributorSalesByGroup.GroupPOSSaleDTO;
 import com.cgnial.salesreports.domain.POSSale;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -26,4 +27,6 @@ public interface POSSalesRepository extends JpaRepository<POSSale, Long> {
     @Query("SELECT p FROM POSSale p WHERE LOWER(p.distributor) = LOWER(:distributor) AND p.quarter <= (:quarter)")
     List<POSSale> findByDistributorInferiorOrEqualToQuarter(@Param("distributor") String distributor, @Param("quarter") int quarter);
 
+    @Query("SELECT p FROM POSSale p WHERE LOWER(p.distributor) = LOWER(:distributor) AND LOWER(p.customerGroup) = LOWER(:customerGroup)")
+    List<POSSale> findSalesByDistributorAndGroup(@Param("distributor") String distributor, @Param("customerGroup") String customerGroup);
 }
