@@ -78,8 +78,14 @@ public class DistributorsSalesController {
 
     @GetMapping("/unfi/byAccount")
     public ResponseEntity<List<YearlySalesByAccountDTO>> getUnfiQuarterlySalesByAccount() {
-        List<YearlySalesByAccountDTO> allUnfiSales =  distributorsSalesService.getBestGroupSalesByYear("Unfi");
+        List<YearlySalesByAccountDTO> allUnfiSales =  distributorsSalesService.getBestAccountSalesByYear("Unfi");
         return ResponseEntity.ok(allUnfiSales);
+    }
+
+    @GetMapping("/puresource/byAccount")
+    public ResponseEntity<List<YearlySalesByAccountDTO>> getPuresourceQuarterlySalesByAccount() {
+        List<YearlySalesByAccountDTO> allPuresourceSales =  distributorsSalesService.getBestAccountSalesByYear("Puresource");
+        return ResponseEntity.ok(allPuresourceSales);
     }
 
     @GetMapping("/unfi/metro")
@@ -93,6 +99,4 @@ public class DistributorsSalesController {
         List<GroupYearlyDTO> allSobeysSales =  distributorsSalesService.getSalesForMassGroup("unfi", "sobeys quebec");
         return ResponseEntity.ok(allSobeysSales);
     }
-
-    //TODO 10 meilleurs comptes par an par quarter
 }

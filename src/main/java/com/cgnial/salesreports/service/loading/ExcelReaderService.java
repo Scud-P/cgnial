@@ -155,6 +155,14 @@ public class ExcelReaderService {
         return true;
     }
 
+    public List<String> getPuresourceSalesToMerge() {
+        return List.of(
+                "Well.ca",
+                "Well.ca ULC",
+                "Well.ca ULC - Calgary"
+        );
+    }
+
     public List<PuresourcePOSParameter> readPuresourcePOSParameters() throws IOException {
         String fileLocation = "src/main/resources/excels/puresource.xlsx";
         FileInputStream file = new FileInputStream(fileLocation);
@@ -206,8 +214,16 @@ public class ExcelReaderService {
                             break;
                         case 2: // Customer Name (this is now the 3rd column after skipping)
                             if (cell.getCellType() == CellType.STRING) {
-                                po.setCustomerName(cell.getStringCellValue());
+
+                                List<String> salesToMerge = getPuresourceSalesToMerge();
+                                if(salesToMerge.contains(cell.getStringCellValue()))
+                                {
+                                    String mergedAccountName = "Well.ca";
+                                    po.setCustomerName(mergedAccountName);
+                                } else {
+                                    po.setCustomerName(cell.getStringCellValue());
 //                                logger.info("Found Customer Name: {}", po.getCustomerName());
+                                }
                             }
                             break;
                         case 3: // Address
@@ -401,6 +417,7 @@ public class ExcelReaderService {
 
         return sales;
     }
+
 
     public List<UnfiPOSParameter> readUNFIPOSParameters() throws IOException {
         String fileLocation = "src/main/resources/excels/unfi.xlsx";
