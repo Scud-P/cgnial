@@ -44,4 +44,9 @@ public class DatesUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         return LocalDate.parse(dateString, formatter).getYear();
     }
+
+    public LocalDate toLocalDate(String dateString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        return LocalDate.parse(dateString, formatter);
+    }
 }
