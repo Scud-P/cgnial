@@ -1,6 +1,8 @@
 package com.cgnial.salesreports.service.dashboard;
 
 import com.cgnial.salesreports.domain.DTO.dashboard.*;
+import com.cgnial.salesreports.domain.DTO.mcb.DetailedMcbDTO;
+import com.cgnial.salesreports.domain.DTO.mcb.McbDTO;
 import com.cgnial.salesreports.domain.POSSale;
 import com.cgnial.salesreports.domain.PurchaseOrder;
 import com.cgnial.salesreports.repositories.POSSalesRepository;
@@ -287,4 +289,117 @@ public class DashboardService {
                 .map(DashboardDetailedFillRatesDTO::new)
                 .toList();
     }
+
+    public McbDTO getMcbInfo() {
+        LocalDate now = LocalDate.now();
+        int currentYear = now.getYear();
+
+        List<POSSale> sales = posSalesRepository.findSalesForYearsAndDistributor(Arrays.asList(currentYear, currentYear - 1), "unfi");
+
+        double currentYearMcbAmount = 0;
+        double currentYearSalesAmount = 0;
+        double previousYearMcbAmount = 0;
+        double previousYearSalesAmount = 0;
+
+        for (POSSale sale : sales) {
+            if (sale.getYear() == currentYear) {
+                currentYearMcbAmount += sale.getMcbAmount();
+                currentYearSalesAmount += sale.getAmount();
+            } else if (sale.getYear() == currentYear - 1) {
+                previousYearMcbAmount += sale.getMcbAmount();
+                previousYearSalesAmount += sale.getAmount();
+            }
+        }
+
+        double currentYearMcbPercentage = currentYearSalesAmount != 0
+                ? currentYearMcbAmount / currentYearSalesAmount * 100
+                : 0;
+
+        double previousYearMcbPercentage = previousYearSalesAmount != 0
+                ? previousYearMcbAmount / previousYearSalesAmount * 100
+                : 0;
+
+        return new McbDTO(currentYearMcbAmount, currentYearSalesAmount,
+                currentYearMcbPercentage, previousYearMcbAmount, previousYearSalesAmount, previousYearMcbPercentage);
+    }
+
+    public DetailedMcbDTO getDetailedMcbInfo() {
+        LocalDate now = LocalDate.now();
+        int currentYear = now.getYear();
+
+        List<POSSale> sales = posSalesRepository.findSalesForYearsAndDistributorAndGroups
+                (Arrays.asList(currentYear, currentYear - 1), "unfi", Arrays.asList("SOBEYS QUEBEC", "METRO QUEBEC", "WHOLE FOODS"));
+
+        double currentYearSobeysSales = 0;
+        double currentYearSobeysMcb = 0;
+        double previousYearSobeysSales = 0;
+        double previousYearSobeysMcb = 0;
+        double currentYearMetroSales = 0;
+        double currentYearMetroMcb = 0;
+        double previousYearMetroSales = 0;
+        double previousYearMetroMcb = 0;
+        double currentYearWfmSales = 0;
+        double currentYearWfmMcb = 0;
+        double previousYearWfmSales = 0;
+        double previousYearWfmMcb = 0;
+
+        for (POSSale sale : sales) {
+            if (sale.getYear() == currentYear && sale.getCustomerGroup().equalsIgnoreCase("Sobeys Quebec")) {
+                currentYearSobeysSales += sale.getAmount();
+                currentYearSobeysMcb += sale.getMcbAmount();
+            } else if (sale.getYear() == currentYear - 1 && sale.getCustomerGroup().equalsIgnoreCase("Sobeys Quebec")) {
+                previousYearSobeysSales += sale.getAmount();
+                previousYearSobeysMcb += sale.getMcbAmount();
+            } else if (sale.getYear() == currentYear && sale.getCustomerGroup().equalsIgnoreCase("Metro Quebec")) {
+                currentYearMetroSales += sale.getAmount();
+                currentYearMetroMcb += sale.getMcbAmount();
+            } else if (sale.getYear() == currentYear - 1 && sale.getCustomerGroup().equalsIgnoreCase("Metro Quebec")) {
+                previousYearMetroSales += sale.getAmount();
+                previousYearMetroMcb += sale.getMcbAmount();
+            } else if (sale.getYear() == currentYear && sale.getCustomerGroup().equalsIgnoreCase("WHOLE FOODS")) {
+                currentYearWfmSales += sale.getAmount();
+                currentYearWfmMcb += sale.getMcbAmount();
+            } else if (sale.getYear() == currentYear - 1 && sale.getCustomerGroup().equalsIgnoreCase("WHOLE FOODS")) {
+                previousYearWfmSales += sale.getAmount();
+                previousYearWfmMcb += sale.getMcbAmount();
+            }
+        }
+
+        double currentYearSobeysMcbPercentage = currentYearSobeysMcb != 0
+                ? currentYearSobeysMcb / currentYearSobeysSales * 100
+                : 0;
+
+        double previousYearSobeysMcbPercentage = previousYearSobeysMcb != 0
+                ? previousYearSobeysMcb / previousYearSobeysSales * 100
+                : 0;
+
+        double currentYearMetroMcbPercentage = currentYearMetroMcb != 0
+                ? currentYearMetroMcb / currentYearMetroSales * 100
+                : 0;
+
+        double previousYearMetroMcbPercentage = previousYearMetroMcb != 0
+                ? previousYearMetroMcb / previousYearMetroSales * 100
+                : 0;
+
+        double currentYearWfmMcbPercentage = currentYearWfmMcb != 0
+                ? currentYearWfmMcb / currentYearWfmSales * 100
+                : 0;
+
+        double previousYearWfmMcbPercentage = previousYearWfmMcb != 0
+                ? previousYearWfmMcb / previousYearWfmSales * 100
+                : 0;
+
+       return new DetailedMcbDTO(
+                currentYearSobeysSales, currentYearSobeysMcb, currentYearSobeysMcbPercentage,
+                previousYearSobeysSales, previousYearSobeysMcb, previousYearSobeysMcbPercentage,
+
+                currentYearMetroSales, currentYearMetroMcb, currentYearMetroMcbPercentage,
+                previousYearMetroSales, previousYearMetroMcb, previousYearMetroMcbPercentage,
+
+                currentYearWfmSales, currentYearWfmMcb, currentYearWfmMcbPercentage,
+                previousYearWfmSales, previousYearWfmMcb, previousYearWfmMcbPercentage
+        );
+    }
+
+
 }

@@ -1,6 +1,8 @@
 package com.cgnial.salesreports.controllers.dashboard;
 
 import com.cgnial.salesreports.domain.DTO.dashboard.*;
+import com.cgnial.salesreports.domain.DTO.mcb.DetailedMcbDTO;
+import com.cgnial.salesreports.domain.DTO.mcb.McbDTO;
 import com.cgnial.salesreports.service.dashboard.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +55,18 @@ public class DashboardController {
     public ResponseEntity<List<DashboardDetailedFillRatesDTO>> getUnfiRecentFillRates() {
         List<DashboardDetailedFillRatesDTO> recentFillRates = dashboardService.getRecentFillRatesAlerts();
         return ResponseEntity.ok(recentFillRates);
+    }
+
+    @GetMapping("/distributorSales/unfi/mcb")
+    public ResponseEntity<McbDTO> getUnfiMcbRate() {
+        McbDTO mcbDTO = dashboardService.getMcbInfo();
+        return ResponseEntity.ok(mcbDTO);
+    }
+
+    @GetMapping("/distributorSales/unfi/mcbDetailed")
+    public ResponseEntity<DetailedMcbDTO> getUnfiDetailedMcb() {
+        DetailedMcbDTO mcbDTO = dashboardService.getDetailedMcbInfo();
+        return ResponseEntity.ok(mcbDTO);
     }
 
 
