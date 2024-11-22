@@ -29,4 +29,7 @@ public interface POSSalesRepository extends JpaRepository<POSSale, Long> {
 
     @Query("SELECT p FROM POSSale p WHERE LOWER(p.distributor) = LOWER(:distributor) AND LOWER(p.customerGroup) = LOWER(:customerGroup)")
     List<POSSale> findSalesByDistributorAndGroup(@Param("distributor") String distributor, @Param("customerGroup") String customerGroup);
+
+    @Query("SELECT p FROM POSSale p WHERE (p.year) = (:year) AND LOWER(p.distributor) = LOWER(:distributor)")
+    List<POSSale> findSalesForYearAndDistributor(@Param("year") int year, @Param("distributor") String distributor);
 }
