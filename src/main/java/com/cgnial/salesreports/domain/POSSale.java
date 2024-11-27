@@ -49,6 +49,8 @@ public class POSSale {
     private double orderAmount;
     @Column(name="mcb_amount")
     private double mcbAmount;
+    @Column(name="week")
+    private int week;
 
     public POSSale(PuresourcePOSParameter parameter) {
         this.distributor = parameter.getDistributor();
@@ -94,5 +96,6 @@ public class POSSale {
         this.orderQuantity = parameter.getOrderQuantity();
         this.orderAmount = parameter.getOrderAmount();
         this.mcbAmount = parameter.getMcbAmount();
+        this.week = parameter.getWeek();
     }
 }

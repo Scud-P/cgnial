@@ -25,5 +25,6 @@ public class UnfiPOSParameter {
     private int orderQuantity;
     private double orderAmount;
     private double mcbAmount;
+    private int week;
 
 }

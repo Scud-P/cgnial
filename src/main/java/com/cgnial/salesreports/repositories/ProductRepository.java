@@ -20,7 +20,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT p.coutuCode FROM Product p WHERE p.satauCode = :satauCode")
     Integer findCoutuCodeBySatauCode(@Param("satauCode") String satauCode);
 
-    @Query("SELECT p.coutuCode FROM Product p WHERE p.oldPuresourceCode = :oldPuresourceCode")
+    @Query(value = "SELECT p.coutu_code FROM Products p WHERE p.old_puresource_code = :oldPuresourceCode LIMIT 1", nativeQuery = true)
     Integer findCoutuCodeByOldPuresourceCode(@Param("oldPuresourceCode") String oldPuresourceCode);
 
     @Modifying
