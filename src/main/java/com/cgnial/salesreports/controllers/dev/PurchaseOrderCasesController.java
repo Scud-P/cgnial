@@ -4,6 +4,7 @@ import com.cgnial.salesreports.service.loading.PurchaseOrderLoaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -16,8 +17,8 @@ public class PurchaseOrderCasesController {
     private PurchaseOrderLoaderService purchaseOrderService;
 
     @PostMapping("/batchSave")
-    public ResponseEntity<String> loadAllCasesSales() throws IOException {
-        purchaseOrderService.saveAllPurchaseOrderCasesQuantity();
+    public ResponseEntity<String> loadAllCasesSales(MultipartFile file) throws IOException {
+        purchaseOrderService.saveAllPurchaseOrderCasesQuantity(file);
         return ResponseEntity.ok("Case quantities saved to DB");
     }
 

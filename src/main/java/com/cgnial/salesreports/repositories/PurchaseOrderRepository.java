@@ -24,4 +24,6 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, In
 
     List<PurchaseOrder> findByDistributor(String distributor);
 
+    @Query("SELECT MAX(p.id) FROM PurchaseOrder p")
+    PurchaseOrder findLastPurchaseorder();
 }

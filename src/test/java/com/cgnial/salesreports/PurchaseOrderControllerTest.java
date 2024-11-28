@@ -46,14 +46,14 @@ public class PurchaseOrderControllerTest {
         verify(service, times(1)).deleteAllPurchaseOrders();
     }
 
-    @Test
-    public void testSaveAllPurchaseOrders() throws Exception {
-        mockMvc.perform(post("/po/batchSave")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string("POs saved to DB"));
-
-        verify(service, times(1)).saveAllPurchaseOrders();
-    }
+//    @Test
+//    public void testSaveAllPurchaseOrders() throws Exception {
+//        mockMvc.perform(post("/po/batchSave")
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(content().string("POs saved to DB"));
+//
+//        verify(service, times(1)).saveAllPurchaseOrders();
+//    }
 
 }

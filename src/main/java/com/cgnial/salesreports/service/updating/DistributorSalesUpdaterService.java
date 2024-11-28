@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Service
-public class UpdaterService {
+public class DistributorSalesUpdaterService {
 
     @Autowired
     private POSSalesRepository salesRepository;
@@ -41,7 +41,7 @@ public class UpdaterService {
     @Autowired
     private DatesUtil datesUtil;
 
-    private static final Logger logger = LoggerFactory.getLogger(UpdaterService.class);
+    private static final Logger logger = LoggerFactory.getLogger(DistributorSalesUpdaterService.class);
 
     public List<String> getSatauExcludedCodes() {
         return List.of(
@@ -54,7 +54,7 @@ public class UpdaterService {
         return salesRepository.findLastSaleForDistributor(distributor);
     }
 
-
+    @Transactional
     public List<POSSale> loadNewUnfiSales(MultipartFile file) throws IOException {
 
         int year = findLastSavedToDbSaleForDistributor("unfi").getYear();
@@ -97,6 +97,7 @@ public class UpdaterService {
         return newUnfiSales;
     }
 
+    @Transactional
     public List<POSSale> loadNewSatauSales(MultipartFile file) throws IOException {
 
         Set<String> missingCodes = new HashSet<>();

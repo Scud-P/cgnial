@@ -46,7 +46,10 @@ public class DatesUtil {
     }
 
     public LocalDate toLocalDate(String dateString) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        return LocalDate.parse(dateString, formatter);
+        if(dateString != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+            return LocalDate.parse(dateString, formatter);
+        }
+        return LocalDate.of(2000, 1, 1);
     }
 }

@@ -1,18 +1,13 @@
 package com.cgnial.salesreports.service.loading;
 
 import com.cgnial.salesreports.domain.parameter.distributorLoading.UnfiPOSParameter;
-import com.cgnial.salesreports.util.FileExtensionChanger;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -21,9 +16,6 @@ import java.util.*;
 public class UnfiUpdateReaderService {
 
     private static final Logger logger = LoggerFactory.getLogger(UnfiUpdateReaderService.class);
-
-    @Autowired
-    private FileExtensionChanger fileExtensionChanger;
 
     private boolean isRowEmpty(Row row) {
         for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
@@ -119,7 +111,7 @@ public class UnfiUpdateReaderService {
                             case 7: // Zip
                                 if (cell.getCellType() == CellType.STRING) {
                                     po.setCustomerGroup(cell.getStringCellValue());
-                                    logger.info("Found UNFI Zipcode: {}", po.getCustomerGroup());
+                                    logger.info("Found UNFI Customer Group: {}", po.getCustomerGroup());
                                 }
                                 break;
 

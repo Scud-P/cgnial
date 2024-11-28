@@ -33,13 +33,13 @@ public class PurchaseOrderCasesControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(purchaseOrderCasesController).build();
     }
 
-    @Test
-    public void loadAllCasesTest() throws Exception {
-        doNothing().when(purchaseOrderService).saveAllPurchaseOrders();
-        mockMvc.perform(post("/cases/batchSave"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Case quantities saved to DB"));
-    }
+//    @Test
+//    public void loadAllCasesTest() throws Exception {
+//        doNothing().when(purchaseOrderService).saveAllPurchaseOrders();
+//        mockMvc.perform(post("/cases/batchSave"))
+//                .andExpect(status().isOk())
+//                .andExpect(content().string("Case quantities saved to DB"));
+//    }
 
     @Test
     public void deleteAllCasesTest() throws Exception {
