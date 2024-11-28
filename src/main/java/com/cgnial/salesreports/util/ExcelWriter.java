@@ -4,12 +4,13 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.util.List;
 
 @Service
 public class ExcelWriter {
-    public static void writeToExcel(List<List<String>> tableData, String outputFilePath) throws Exception {
+    public static byte[] writeToExcel(List<List<String>> tableData) throws Exception {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("HTML Table");
 
@@ -22,11 +23,11 @@ public class ExcelWriter {
             }
         }
 
-        try (FileOutputStream fos = new FileOutputStream(outputFilePath)) {
-            workbook.write(fos);
+        // Write to a ByteArrayOutputStream
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            workbook.write(bos);
+            workbook.close();
+            return bos.toByteArray(); // Return the Excel file as a byte array
         }
-
-        workbook.close();
-        System.out.println("Excel file created: " + outputFilePath);
     }
 }

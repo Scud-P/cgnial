@@ -9,10 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @Service
@@ -34,17 +36,15 @@ public class UnfiUpdateReaderService {
     }
 
 
-    public List<UnfiPOSParameter> readUNFIPOSParameters() throws IOException {
+    public List<UnfiPOSParameter> readUNFIPOSParameters(MultipartFile file) throws IOException {
 
-        String fileLocation = "src/main/resources/excels/CUISINE SOLEIL CY2024 WK46.xlsx";
-        FileInputStream file = new FileInputStream(fileLocation);
-        Workbook workbook = new XSSFWorkbook(file);
+        List<UnfiPOSParameter> sales = new ArrayList<>();
+        Set<Integer> columnsToSkip = new HashSet<>(Arrays.asList(1, 2, 4, 5, 6, 7, 8, 14, 18, 24, 25, 26, 27, 28));
 
+
+        try (InputStream inputStream = file.getInputStream()) {
+            Workbook workbook = new XSSFWorkbook(inputStream);
             Sheet sheet = workbook.getSheetAt(10);
-            List<UnfiPOSParameter> sales = new ArrayList<>();
-
-            // Define which columns to skip by their index
-            Set<Integer> columnsToSkip = new HashSet<>(Arrays.asList(1, 2, 4, 5, 6, 7, 8, 14, 18, 24, 25, 26, 27, 28));
 
             for (Row row : sheet) {
                 // Skip the header row
@@ -72,7 +72,7 @@ public class UnfiUpdateReaderService {
                         switch (actualColumnIndex) {
 
                             case 0: //Week
-                                if(cell.getCellType() == CellType.STRING) {
+                                if (cell.getCellType() == CellType.STRING) {
                                     int week = Integer.parseInt(cell.getStringCellValue());
                                     po.setWeek(week);
                                     logger.info("Found UNFI Week: {}", po.getWeek());
@@ -80,7 +80,7 @@ public class UnfiUpdateReaderService {
                                 break;
 
                             case 1: //Item Number
-                                if(cell.getCellType() == CellType.STRING) {
+                                if (cell.getCellType() == CellType.STRING) {
                                     po.setUnfiItemNumber(cell.getStringCellValue());
                                     logger.info("Found UNFI Item number: {}", po.getUnfiItemNumber());
                                 }
@@ -175,8 +175,7 @@ public class UnfiUpdateReaderService {
                 }
                 sales.add(po);
             }
-            workbook.close();
-            file.close();
-            return sales;
         }
+        return sales;
     }
+}

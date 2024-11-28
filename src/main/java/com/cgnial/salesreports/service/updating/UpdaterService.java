@@ -1,19 +1,18 @@
 package com.cgnial.salesreports.service.updating;
 
 import com.cgnial.salesreports.domain.POSSale;
-import com.cgnial.salesreports.domain.parameter.distributorLoading.PuresourcePOSParameter;
 import com.cgnial.salesreports.repositories.POSSalesRepository;
 import com.cgnial.salesreports.service.loading.PuresourceUpdateReaderService;
 import com.cgnial.salesreports.service.loading.SatauUpdateReaderService;
 import com.cgnial.salesreports.service.loading.ItemNumberMatchingService;
 import com.cgnial.salesreports.service.loading.UnfiUpdateReaderService;
 import com.cgnial.salesreports.util.DatesUtil;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -56,7 +55,7 @@ public class UpdaterService {
     }
 
 
-    public List<POSSale> loadNewUnfiSales() throws IOException {
+    public List<POSSale> loadNewUnfiSales(MultipartFile file) throws IOException {
 
         int year = findLastSavedToDbSaleForDistributor("unfi").getYear();
         int week = findLastSavedToDbSaleForDistributor("unfi").getWeek();
@@ -65,7 +64,7 @@ public class UpdaterService {
 
         int missingSales = 0;
 
-        List<POSSale> newUnfiSales = unfiUpdateReaderService.readUNFIPOSParameters().stream()
+        List<POSSale> newUnfiSales = unfiUpdateReaderService.readUNFIPOSParameters(file).stream()
                 .filter(sale ->
                         sale.getYear() > year || (sale.getYear() == year && sale.getWeek() > week)
                 )
@@ -98,7 +97,7 @@ public class UpdaterService {
         return newUnfiSales;
     }
 
-    public List<POSSale> loadNewSatauSales() throws IOException {
+    public List<POSSale> loadNewSatauSales(MultipartFile file) throws IOException {
 
         Set<String> missingCodes = new HashSet<>();
 
@@ -109,7 +108,7 @@ public class UpdaterService {
 
         List<String> excludedCodes = getSatauExcludedCodes();
 
-        List<POSSale> newSatauSales = satauUpdateReaderService.readSatauPOSParameters().stream()
+        List<POSSale> newSatauSales = satauUpdateReaderService.readSatauPOSParameters(file).stream()
                 .filter(sale ->
                         sale.getYear() > year || (sale.getYear() == year && sale.getMonth() > month)
                 )
@@ -142,7 +141,7 @@ public class UpdaterService {
     }
 
     @Transactional
-    public List<POSSale> loadNewPuresourceSales() throws Exception {
+    public List<POSSale> loadNewPuresourceSales(MultipartFile file) throws Exception {
 
         List<String> discontinuedProducts = getDiscontinuedPuresourceCodes();
         Set<String> missingCodes = new HashSet<>();
@@ -150,10 +149,10 @@ public class UpdaterService {
         int month = findLastSavedToDbSaleForDistributor("puresource").getMonth();
         int year = findLastSavedToDbSaleForDistributor("puresource").getYear();
 
-        List<POSSale> salesToPersist = puresourceUpdateReaderService.readPuresourcePOSParameters(month, year).stream()
+        List<POSSale> salesToPersist = puresourceUpdateReaderService.readPuresourcePOSParameters(file, month, year).stream()
                 .filter(sale ->
                         sale.getYear() > year || (sale.getYear() == year && sale.getMonth() > month)
-                )                .filter(parameter -> !discontinuedProducts.contains(parameter.getPuresourceItemNumber()))
+                ).filter(parameter -> !discontinuedProducts.contains(parameter.getPuresourceItemNumber()))
                 .map(parameter -> {
                     int productCode = itemNumberMatchingService.determineProductCodeFromPuresourceItemNumber(parameter.getPuresourceItemNumber());
 
@@ -176,12 +175,12 @@ public class UpdaterService {
 
         logger.info("Missing Codes: {} ", missingCodes);
 
-        for(POSSale sale : salesToPersist) {
-            if(sale.getItemNumber() == 0) {
+        for (POSSale sale : salesToPersist) {
+            if (sale.getItemNumber() == 0) {
                 logger.info("{}", sale);
             }
         }
-//        salesRepository.saveAll(salesToPersist);
+        salesRepository.saveAll(salesToPersist);
         return salesToPersist;
     }
 

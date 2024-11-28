@@ -10,8 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @Service
@@ -46,148 +50,101 @@ public class PuresourceUpdateReaderService {
         );
     }
 
-    public void convertHtmlToExcel(String htmlFilePath, String outputExcelPath) throws Exception {
-        List<List<String>> tableData = HtmlTableParser.parseHtmlTable(htmlFilePath);
-        ExcelWriter.writeToExcel(tableData, outputExcelPath);
+    public List<List<String>> parseAndWriteHtmlToExcel(MultipartFile htmlFile) throws Exception {
+        // Parse the HTML file
+        InputStream inputStream = htmlFile.getInputStream();
+        List<List<String>> tableData = HtmlTableParser.parseHtmlTable(inputStream);
+
+        // Write the table data to Excel
+        byte[] excelData = ExcelWriter.writeToExcel(tableData);
+
+        // You can now either:
+        // 1. Save the `excelData` to a file if needed
+        // 2. Process the `excelData` directly (e.g., send to another service)
+
+        return tableData; // Returning tableData for further processing
     }
 
 
-    public List<PuresourcePOSParameter> readPuresourcePOSParameters(int month, int year) throws Exception {
+    public List<PuresourcePOSParameter> readPuresourcePOSParameters(MultipartFile htmlFile, int month, int year) throws Exception {
 
-        int newMonth;
-        int newYear;
+        int newMonth = (month == 12) ? 1 : month + 1;
+        int newYear = (month == 12) ? year + 1 : year;
 
-        if(month == 12) {
-            newYear = year+1;
-            newMonth = 1;
+        // Parse HTML and convert it to Excel in memory
+        List<List<String>> tableData = HtmlTableParser.parseHtmlTable(htmlFile.getInputStream());
+        byte[] excelData = ExcelWriter.writeToExcel(tableData);
 
-        } else {
-            newYear = year;
-            newMonth = month+1;
-        }
+        // Create a Workbook from the in-memory Excel data
+        try (InputStream excelStream = new ByteArrayInputStream(excelData);
+             Workbook workbook = new XSSFWorkbook(excelStream)) {
 
-        String htmlLocation = "src/main/resources/excels/Puresource Vendor Sales Report OCT-2024 for Item Code SOL.xls";
+            Sheet sheet = workbook.getSheetAt(0);
+            List<PuresourcePOSParameter> sales = new ArrayList<>();
 
-        String fileLocation = "src/main/resources/excels/Puresource Vendor Sales Report OCT-2024 for Item Code SOL.xlsx";
+            // Define which columns to skip by their index
+            Set<Integer> columnsToSkip = new HashSet<>(List.of(0, 6, 7, 9));
 
-        convertHtmlToExcel(htmlLocation, fileLocation);
+            for (Row row : sheet) {
+                // Skip the header row
+                if (row.getRowNum() == 0) continue;
 
-        FileInputStream file = new FileInputStream(fileLocation);
-        Workbook workbook = new XSSFWorkbook(file);
+                if (isRowEmpty(row)) break;
 
-        Sheet sheet = workbook.getSheetAt(0);
-        List<PuresourcePOSParameter> sales = new ArrayList<>();
+                PuresourcePOSParameter po = new PuresourcePOSParameter();
 
-        // Define which columns to skip by their index (mm/yy, customer number, brand code, product description)
-        Set<Integer> columnsToSkip = new HashSet<>(List.of(0, 6, 7, 9));
+                int actualColumnIndex = 0;
+                for (int colIndex = 0; colIndex <= row.getLastCellNum(); colIndex++) {
+                    if (columnsToSkip.contains(colIndex)) continue;
 
-        for (Row row : sheet) {
-            // Skip the header row
-            if (row.getRowNum() == 0) {
-                continue;
-            }
-
-            if(row.getCell(0).getStringCellValue().equalsIgnoreCase("")) {
-                break;
-            }
-
-            if (isRowEmpty(row)) {
-                break;
-            }
-
-            PuresourcePOSParameter po = new PuresourcePOSParameter();
-
-            // Track the current index of the cell to process
-            int actualColumnIndex = 0;
-
-            for (int colIndex = 0; colIndex <= row.getLastCellNum(); colIndex++) {
-                // Check if the current column index is in the skip list
-                if (columnsToSkip.contains(colIndex)) {
-//                    logger.info("Skipping column {} as per configuration.", colIndex);
-                    continue;  // Skip this column
-                }
-
-                Cell cell = row.getCell(colIndex);
-                if (cell != null) {
-                    // Only process non-skipped columns
-                    switch (actualColumnIndex) {
-                        case 0: // Customer Name (this is now the 3rd column after skipping)
-                            if (cell.getCellType() == CellType.STRING) {
-
-                                List<String> salesToMerge = getPuresourceSalesToMerge();
-                                if (salesToMerge.contains(cell.getStringCellValue())) {
-                                    String mergedAccountName = "Well.ca";
-                                    po.setCustomerName(mergedAccountName);
-                                } else {
-                                    po.setCustomerName(cell.getStringCellValue());
-//                                logger.info("Found Customer Name: {}", po.getCustomerName());
+                    Cell cell = row.getCell(colIndex);
+                    if (cell != null) {
+                        switch (actualColumnIndex) {
+                            case 0: // Customer Name
+                                if (cell.getCellType() == CellType.STRING) {
+                                    List<String> salesToMerge = getPuresourceSalesToMerge();
+                                    String customerName = cell.getStringCellValue();
+                                    po.setCustomerName(salesToMerge.contains(customerName) ? "Well.ca" : customerName);
                                 }
-                            }
-                            break;
-                        case 1: // Address
-                            if (cell.getCellType() == CellType.STRING) {
-                                po.setAddress(cell.getStringCellValue());
-//                                logger.info("Found Address: {}", po.getAddress());
-                            }
-                            break;
-                        case 2: // City
-                            if (cell.getCellType() == CellType.STRING) {
-                                po.setCity(cell.getStringCellValue());
-//                                logger.info("Found City: {}", po.getCity());
-                            }
-                            break;
-                        case 3: // Province
-                            if (cell.getCellType() == CellType.STRING) {
-                                po.setProvince(cell.getStringCellValue());
-//                                logger.info("Found Province: {}", po.getProvince());
-                            }
-                            break;
-                        case 4: // Zipcode
-                            if (cell.getCellType() == CellType.STRING) {
-                                po.setZipcode(cell.getStringCellValue());
-//                                logger.info("Found Zipcode: {}", po.getZipcode());
-                            }
-                            break;
-                        case 5: // Item Number
-                            if (cell.getCellType() == CellType.STRING) {
-                                po.setPuresourceItemNumber(cell.getStringCellValue());
-//                                logger.info("Found Item Number: {}", po.getPuresourceItemNumber());
-                            }
-                            break;
-                        case 6: // Quantity
-                            if (cell.getCellType() == CellType.STRING) {
-                                int qty = Integer.parseInt(cell.getStringCellValue());
-                                po.setQuantity(qty);
-//                                logger.info("Found Quantity: {}", po.getQuantity());
-                            }
-                            break;
-                        case 7: // Amount
-                            if (cell.getCellType() == CellType.STRING) {
-                                double amount = Double.parseDouble(cell.getStringCellValue());
-                                po.setAmount(amount);
-                            }
-                            break;
-                        default:
-                            break;
+                                break;
+                            case 1: // Address
+                                if (cell.getCellType() == CellType.STRING) po.setAddress(cell.getStringCellValue());
+                                break;
+                            case 2: // City
+                                if (cell.getCellType() == CellType.STRING) po.setCity(cell.getStringCellValue());
+                                break;
+                            case 3: // Province
+                                if (cell.getCellType() == CellType.STRING) po.setProvince(cell.getStringCellValue());
+                                break;
+                            case 4: // Zipcode
+                                if (cell.getCellType() == CellType.STRING) po.setZipcode(cell.getStringCellValue());
+                                break;
+                            case 5: // Item Number
+                                if (cell.getCellType() == CellType.STRING) po.setPuresourceItemNumber(cell.getStringCellValue());
+                                break;
+                            case 6: // Quantity
+                                if(cell.getCellType() == CellType.STRING && cell.getStringCellValue().equalsIgnoreCase("")) break;
+                                if (cell.getCellType() == CellType.STRING) po.setQuantity(Integer.parseInt(cell.getStringCellValue()));
+                                break;
+                            case 7: // Amount
+                                if(cell.getCellType() == CellType.STRING && cell.getStringCellValue().equalsIgnoreCase("")) break;
+                                if (cell.getCellType() == CellType.STRING) po.setAmount(Double.parseDouble(cell.getStringCellValue()));
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                    po.setMonth(newMonth);
-                    po.setYear(newYear);
-                    po.setQuarter(datesUtil.determineQuarter(newMonth));
+
+                    if (!columnsToSkip.contains(colIndex)) actualColumnIndex++;
                 }
 
-                // Increment the actual column index only if not skipping
-                if (!columnsToSkip.contains(colIndex)) {
-                    actualColumnIndex++;
-                }
+                po.setMonth(newMonth);
+                po.setYear(newYear);
+                po.setQuarter(datesUtil.determineQuarter(newMonth));
+
+                sales.add(po);
             }
-            sales.add(po);
+            return sales;
         }
-        workbook.close();
-        file.close();
-
-        logger.info("New sales found: {}", sales);
-        logger.info("{} new sales found", sales.size());
-        return sales;
     }
-
 }
