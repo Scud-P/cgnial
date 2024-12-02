@@ -1,6 +1,7 @@
 package com.cgnial.salesreports.repositories;
 
 
+import com.cgnial.salesreports.domain.PurchaseOrder;
 import com.cgnial.salesreports.domain.PurchaseOrderProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -14,4 +15,5 @@ public interface PurchaseOrderProductRepository extends JpaRepository<PurchaseOr
     @Query(value = "ALTER TABLE purchase_orders_quantities AUTO_INCREMENT = 1", nativeQuery = true)
     void resetAutoIncrement();
 
+    PurchaseOrderProduct findTopByOrderByIdDesc();
 }

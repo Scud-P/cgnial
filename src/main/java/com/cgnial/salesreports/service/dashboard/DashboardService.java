@@ -147,17 +147,10 @@ public class DashboardService {
                 ))
                 .toList();
 
-//        for (POSSaleDashboardDTO dto : satauSalesDTO) {
-//            logger.info("DTO: {}", dto);
-//        }
-
         LocalDate now = LocalDate.now();
         int thisYear = now.getYear();
         int lastYear = thisYear - 1;
         int thisMonth = now.getMonthValue();
-
-        logger.info("This year: {}", thisYear);
-        logger.info("This month: {}", thisMonth);
 
         List<POSSaleDashboardDTO> thisYearYTDSales = satauSalesDTO.stream()
                 .filter(sale -> sale.getYear() == thisYear)
@@ -179,9 +172,6 @@ public class DashboardService {
         int lastRecordedMonth = lastRecordedMonthOptional.orElse(-1);  // Returns -1 if no data found
 
         String lastUploadedSale = lastRecordedMonth + "/" + thisYear;
-
-        logger.info("Sales for current year: {}", thisYearSales);
-        logger.info("Sales for last year: {}", lastYearSales);
 
         return new DashboardDistributorSalesSummaryDTO(lastYearSales, thisYearSales, lastUploadedSale);
     }
@@ -389,7 +379,7 @@ public class DashboardService {
                 ? previousYearWfmMcb / previousYearWfmSales * 100
                 : 0;
 
-       return new DetailedMcbDTO(
+        return new DetailedMcbDTO(
                 currentYearSobeysSales, currentYearSobeysMcb, currentYearSobeysMcbPercentage,
                 previousYearSobeysSales, previousYearSobeysMcb, previousYearSobeysMcbPercentage,
 
@@ -400,6 +390,4 @@ public class DashboardService {
                 previousYearWfmSales, previousYearWfmMcb, previousYearWfmMcbPercentage
         );
     }
-
-
 }

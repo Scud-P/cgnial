@@ -45,16 +45,36 @@ public class ReportsUpdateController {
     }
 
     @PostMapping("/puresourceSales")
-    public ResponseEntity<List<POSSale>> updatePuresourceSales(@RequestParam("file")MultipartFile file) throws Exception {
+    public ResponseEntity<List<POSSale>> uploadPuresourceSales(@RequestParam("file")MultipartFile file) throws Exception {
         List<POSSale> puresourceSales = salesService.loadNewPuresourceSales(file);
         return ResponseEntity.ok(puresourceSales);
     }
 
+    //TODO RENAME AND MOVE THE METHOD BELOW
+
     @Transactional
+    @PostMapping("/poMasterSalesToRemove")
+    public ResponseEntity<List<List<?>>> uploadPurchaseOrders(@RequestParam("file")MultipartFile file) throws Exception {
+        List<PurchaseOrder> uploadedPurchaseOrders = poService.uploadPurchaseOrders(file);
+        List<PurchaseOrderProduct> uploadPurchaseOrderProducts = poService.uploadPurchaseOrderProducts(file);
+        return ResponseEntity.ok(List.of(uploadedPurchaseOrders, uploadPurchaseOrderProducts));
+    }
+
     @PostMapping("/poMasterSales")
-    public ResponseEntity<List<List<?>>> updatePurchaseOrders(@RequestParam("file")MultipartFile file) throws Exception {
+    public ResponseEntity<String> updatePurchaseOrders(@RequestParam("file") MultipartFile file) throws Exception {
+
+        Thread.sleep(2000);
+
         List<PurchaseOrder> updatedPurchaseOrder = poService.updatePurchaseOrders(file);
+        Thread.sleep(2000);
+        logger.info("List of updated PurchaseOrders: {}", updatedPurchaseOrder); // Log the actual list
+
+
         List<PurchaseOrderProduct> updatedPurchaseOrderProducts = poService.updatePurchaseOrderProducts(file);
-        return ResponseEntity.ok(List.of(updatedPurchaseOrder, updatedPurchaseOrderProducts));
+        Thread.sleep(2000);
+        logger.info("List of updated PurchaseOrderProducts: {}", updatedPurchaseOrderProducts);
+
+
+        return ResponseEntity.ok(updatedPurchaseOrder.toString() + updatedPurchaseOrderProducts.toString());
     }
 }
