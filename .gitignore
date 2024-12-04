@@ -37,4 +37,5 @@ build/
 
 src/main/resources/static/images/
 src/main/resources/excels/
-
+src/main/resources/application.properties
+salesreports-1.0.exe
