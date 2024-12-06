@@ -87,26 +87,27 @@ public class POSSalesLoaderService {
 
                     if (productCode == 0) {
                         productCode = itemNumberMatchingService.determineProductCodeFromOldSatauItemNumber(parameter.getSatauItemNumber());
-                        logger.info("Found old Satau product code {}, assigning it to Coutu Code {}", parameter.getSatauItemNumber(), productCode);
+//                        logger.info("Found old Satau product code {}, assigning it to Coutu Code {}", parameter.getSatauItemNumber(), productCode);
                     }
 
                     // Create a new POSSale object and set the product code
+//                    logger.info("Parameter before constructing entity: {}", parameter);
                     POSSale sale = new POSSale(parameter);
                     sale.setItemNumber(productCode);
+//                    logger.info("Entity before loading to DB: {}", parameter);
                     if(sale.getItemNumber() == 0) {
                         missingCodes.add(parameter.getSatauItemNumber());
                     }
                     return sale;
                 })
                 .toList();
-        logger.info("Missing Satau Codes: {} ", missingCodes);
+//        logger.info("Missing Satau Codes: {} ", missingCodes);
 
         for(POSSale sale : salesToPersist) {
             if(sale.getItemNumber() == 0) {
                 logger.info("{}", sale);
             }
         }
-
         // Persist all sales to the repository
         posSalesRepository.saveAll(salesToPersist);
     }

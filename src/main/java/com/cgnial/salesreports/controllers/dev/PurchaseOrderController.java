@@ -30,5 +30,12 @@ public class PurchaseOrderController {
         purchaseOrderService.saveAllPurchaseOrders(file);
         return ResponseEntity.ok("POs saved to DB");
     }
+
+    @PostMapping("/initialSave")
+    public ResponseEntity<String> saveInitialPurchaseOrders() throws IOException {
+        purchaseOrderService.saveInitialPos();
+        return ResponseEntity.ok("POs saved to DB");
+    }
+
 }
 

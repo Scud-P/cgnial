@@ -16,8 +16,13 @@ public class Ingredient {
 
     @Id
     private String id;
+    private int coutuIngredientCode;
     private String name;
     private String rawMaterialCode;
     private double cost;
 
+    public Ingredient(RawMaterial rawMaterial) {
+        this.rawMaterialCode = rawMaterial.getCoutuId();
+        this.cost = rawMaterial.getCost() / rawMaterial.getYield();
+    }
 }

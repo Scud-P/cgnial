@@ -42,10 +42,18 @@ public class DashboardService {
 
     public DashboardYTDSalesDTO getYTDSalesToDistributor(String distributor) {
 
+        List<PurchaseOrder> allPos = poRepository.findAll();
+        logger.info("Found Pos for distributor{}", allPos);
+
+        List<PurchaseOrder> debugList = poRepository.findByDistributor(distributor);
+        logger.info("Found Pos {}", debugList);
+
         List<PurchaseOrder> allPosForDistributor = poRepository.findByDistributor(distributor)
                 .stream()
                 .filter(po -> po.getDistributor().equalsIgnoreCase(distributor))
                 .toList();
+
+        logger.info("Ytd sales for distributor {} : {}", distributor, allPosForDistributor);
 
         List<PurchaseOrderDashboardDTO> dtos = allPosForDistributor.stream()
                 .map(po -> new PurchaseOrderDashboardDTO(
@@ -103,6 +111,7 @@ public class DashboardService {
                 .sum();
 
         purchaseOrderSummaryDTO.setTotalAmount(totalAmountForLastYear);
+        logger.info("Purchase order summary for {} : {}", distributor, purchaseOrderSummaryDTO);
 
         return purchaseOrderSummaryDTO;
     }

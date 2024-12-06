@@ -4,7 +4,6 @@ import com.cgnial.salesreports.domain.RawMaterial;
 import com.cgnial.salesreports.repositories.RawMaterialsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RawMaterialsService {
@@ -16,12 +15,10 @@ public class RawMaterialsService {
         return rawMaterialsRepository.save(rawMaterial);
     }
 
-    @Transactional
     public void deleteRawMaterial(String id) {
         rawMaterialsRepository.deleteById(id);
     }
 
-    @Transactional
     public RawMaterial editRawMaterial(RawMaterial rawMaterial) {
 
         RawMaterial materialToUpdate = rawMaterialsRepository.findById(rawMaterial.getId())

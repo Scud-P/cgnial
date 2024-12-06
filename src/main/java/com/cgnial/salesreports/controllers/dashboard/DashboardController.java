@@ -68,10 +68,4 @@ public class DashboardController {
         DetailedMcbDTO mcbDTO = dashboardService.getDetailedMcbInfo();
         return ResponseEntity.ok(mcbDTO);
     }
-
-
-    //TODO ALERTE FILL RATE < 95% sur un produit sur un mois
-    //TODO POST MAPPING POUR MAJ PO MASTER
-    //TODO POST MAPPING POUR MAJ VENTES DISTRIBUTEURS
-
 }

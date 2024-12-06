@@ -112,6 +112,40 @@ public class ExcelReaderService {
         return products;
     }
 
+    public List<PurchaseOrder> readInitialPurchaseOrdersExcelFile() throws IOException {
+        String fileLocation = "src/main/resources/excels/pomaster.xlsx";
+        FileInputStream file = new FileInputStream(fileLocation);
+        Workbook workbook = new XSSFWorkbook(file);
+
+        Sheet sheet = workbook.getSheetAt(0);
+
+        List<PurchaseOrder> pos = new ArrayList<>();
+
+        for (Row row : sheet) {
+            // Skip the header row
+            if (row.getRowNum() == 0) {
+                continue;
+            }
+
+            if (isRowEmpty(row)) {
+                break;
+            }
+            PurchaseOrder po = new PurchaseOrder();
+            if (row.getCell(0) != null) {
+                po.setPoDate(row.getCell(0).getStringCellValue());
+            }
+            if (row.getCell(1) != null) {
+                po.setDistributor(row.getCell(1).getStringCellValue());
+            }
+            if (row.getCell(2) != null) {
+                po.setAmount((int) row.getCell(2).getNumericCellValue());
+            }
+            logger.info("ExcelReader found PO: {}", po);
+            pos.add(po);
+        }
+        return pos;
+    }
+
 
     public List<PurchaseOrder> readPurchaseOrdersExcelFile(MultipartFile file) throws IOException {
 

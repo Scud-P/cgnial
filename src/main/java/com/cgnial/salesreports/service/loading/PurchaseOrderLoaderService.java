@@ -56,4 +56,15 @@ public class PurchaseOrderLoaderService {
         purchaseOrderProductRepository.resetAutoIncrement();
     }
 
+    @Transactional
+    public void saveInitialPos() throws IOException {
+        List<PurchaseOrder> purchaseOrders = excelReaderService.readInitialPurchaseOrdersExcelFile();
+        purchaseOrderRepository.saveAll(purchaseOrders);
+    }
+
+    @Transactional
+    public void saveInitialPoQuantities() throws IOException {
+        List<PurchaseOrderProduct> poProducts = productQuantityReaderService.readInitialCaseQuantities();
+        purchaseOrderProductRepository.saveAll(poProducts);
+    }
 }

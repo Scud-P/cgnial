@@ -28,4 +28,10 @@ public class PurchaseOrderCasesController {
         return ResponseEntity.ok("Case quantities DB cleared");
     }
 
+    @PostMapping("/initialSave")
+    public ResponseEntity<String> loadAllCasesSales() throws IOException {
+        purchaseOrderService.saveInitialPoQuantities();
+        return ResponseEntity.ok("Case quantities saved to DB");
+    }
+
 }
